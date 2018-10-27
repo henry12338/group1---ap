@@ -3,7 +3,7 @@
 	#include <stdint.h>
 	typedef struct CFQuery
 	{
-		int DataType;// 1 == char CharacterData, 2 == StringData, 3 == IntData, 4 = UIntData
+		int DataType;// -1 == ERROR, 1 == char CharacterData, 2 == StringData, 3 == IntData, 4 = UIntData
 		char CharacterData;
 		char * StringData;
 		int IntData;
