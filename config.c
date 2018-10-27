@@ -1,5 +1,7 @@
 #include "config.h"
 #include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
 ConfigQuery Load_Config_Character(const char * FileName, const char * Key)
 {
 	ConfigQuery buf;
@@ -13,7 +15,7 @@ ConfigQuery Load_Config_Character(const char * FileName, const char * Key)
 	//seek Key and obtain value
 	char Line[500];
 	char LineKey[500], LineValue[500];
-	bool gotcha = 0;
+	int gotcha = 0;
 	while(fgets(Line, sizeof(Line), fp))
 	{
 		if(Line[strlen(Line)-1] == '\n')
@@ -52,7 +54,7 @@ ConfigQuery Load_Config_String(const char * FileName, const char * Key)
 	//seek Key and obtain value
 	char Line[500];
 	char LineKey[500], LineValue[500];
-	bool gotcha = 0;
+	int gotcha = 0;
 	while(fgets(Line, sizeof(Line), fp))
 	{
 		if(Line[strlen(Line)-1] == '\n')
@@ -74,12 +76,12 @@ ConfigQuery Load_Config_String(const char * FileName, const char * Key)
 	}
 	else
 	{
-		buf.StringData = malloc(sizeof(char) * strlen(LineValue)+1));
+		buf.StringData = malloc(sizeof(char) * (strlen(LineValue)+1));
 		strcpy(buf.StringData, LineValue);
 	}
 	return buf;
 }
-ConfigQuery Load_Config_Int(const char * FileName, const char * Key)
+ConfigQuery Load_Config_IntData(const char * FileName, const char * Key)
 {
 	ConfigQuery buf;
 	FILE * fp = fopen(FileName, "r");
@@ -92,7 +94,7 @@ ConfigQuery Load_Config_Int(const char * FileName, const char * Key)
 	//seek Key and obtain value
 	char Line[500];
 	char LineKey[500], LineValue[500];
-	bool gotcha = 0;
+	int gotcha = 0;
 	while(fgets(Line, sizeof(Line), fp))
 	{
 		if(Line[strlen(Line)-1] == '\n')
@@ -131,7 +133,7 @@ ConfigQuery Load_Config_UIntData(const char * FileName, const char * Key)
 	//seek Key and obtain value
 	char Line[500];
 	char LineKey[500], LineValue[500];
-	bool gotcha = 0;
+	int gotcha = 0;
 	while(fgets(Line, sizeof(Line), fp))
 	{
 		if(Line[strlen(Line)-1] == '\n')

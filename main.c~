@@ -2,17 +2,38 @@
 #include <string.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <sys/time.h>
+#include <sys/types.h>
+#include <sys/select.h>
+#include <arpa/inet.h>
 #include <errno.h>
 
 #include "config.h"
 int main()
 {
-	char ip_address[100];
+	char ip_address[100] = {};
+	char DNS_address[200] = {};
 	ConfigQuery ConfigBuf;
-	Config = Load_Config_String("./config/connectconfig", "IP_Address");
-	strcpy(ip_address, Config.StringData);
-	Config = Load_Config_IntData("./config/connectconfig", "IP_Address");
-	int port = Config.IntData;
+	ConfigBuf = Load_Config_String("./config/connect_config", "IP_Address");
+	if(ConfigBuf.DataType == -1)
+	{
+		ConfigBuf = Load_Config_String("./config/connect_config", "DNS_Address");
+		if(ConfigBuf.DataType == -1)
+		{
+			puts("No proper config");
+			return -3;
+		}
+		strcpy(DNS_address, ConfigBuf.StringData);
+		printf("Load DNS: %s\n", DNS_address);
+	}
+	else
+	{
+		strcpy(ip_address, ConfigBuf.StringData);
+		printf("Load IP: %s\n", ip_address);
+	}
+	ConfigBuf = Load_Config_IntData("./config/connect_config", "Port");
+	int port = ConfigBuf.IntData;
+	printf("Load Port: %d\n", ip_address);
 
 
 	struct sockaddr_in serveraddr;
@@ -36,19 +57,34 @@ int main()
 	char send_buf[1000];
 	char recv_buf[1000];
 	int send_fail;
-	printf("Send Message: ");
 	while(fgets(send_buf, sizeof(send_buf), stdin))
 	{
-		send_fail = send(socket_fd, send_buf, sizeof(send_buf), 0);
-		printf("Send Message %s to %s", send_buf, ip_address);
-		if(send_fail == -1)
+		//send and recv simultaneously
+		fd_set read_fd, write_fd;
+		struct timeval tv;
+		tv.tv_sec = 0;
+		tv.tv_usec = 0;
+		FD_ZERO(&read_fd);
+		FD_ZERO(&write_fd);		
+		FD_SET(socket_fd, &read_fd);
+		//FD_SET( socket_fd, &write_fd);
+		FD_SET(0, &write_fd);
+		
+		if(select(socket_fd+1, &read_fd, &write_fd, NULL, &tv) < 0)
 		{
-			printf("Send Message %s fail\n", send_buf);
-			return -3;
+			puts("select() failed");
+			return -4;
 		}
-		recv(socket_fd, recv_buf, sizeof(recv_buf), 0);
-		printf("Receive: %s\n", recv_buf);
-		printf("Send Message: ");
+		if(FD_ISSET(socket_fd, &read_fd))
+		{
+			recv(socket_fd, recv_buf, 1000, 0);
+			printf("Received result from server = %s\n", recv_buf);
+		}
+		if( FD_ISSET( 0, &write_fd)) {
+			fgets(send_buf, sizeof(send_buf), stdin);
+			send_fail = send(socket_fd, send_buf, strlen(send_buf), 0);
+			printf("-------------Sent %d bytes to server--------------\n", send_buf);
+		}
 	}
 	shutdown(socket_fd, 2);
 }

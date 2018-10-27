@@ -12,6 +12,6 @@
 
 	ConfigQuery Load_Config_Character(const char * FileName, const char * Key);
 	ConfigQuery Load_Config_String(const char * FileName, const char * Key);
-	ConfigQuery Load_Config_Int(const char * FileName, const char * Key);
+	ConfigQuery Load_Config_IntData(const char * FileName, const char * Key);
 	ConfigQuery Load_Config_UIntData(const char * FileName, const char * Key);
 #endif
