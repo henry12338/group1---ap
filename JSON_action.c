@@ -1,53 +1,119 @@
 #include "JSON_action.h"
 #include "mjson.h"
+#include <stdint.h>
 
-bool Request_Controller_Alive()
+int Request_Controller_Alive(char * OutputBuf)
 {
-	
+	char buf[200];
+	sprintf(OutputBuf, "{\n");
+	sprintf(buf, "\"Action\" : 0\n");
+	strcat(OutputBuf, buf);
+	sprintf(buf, "}\n");
+	strcat(OutputBuf, buf);
+	return 1;
 }
-bool Request_Register_AP()
+int Request_Register_AP(const char * ip, char * OutputBuf)
 {
+	sprintf(OutputBuf, "{\n");
+	sprintf(buf, "\"Action\" : 1\n");
+	strcat(OutputBuf, buf);
+	sprintf(buf, "\"AP out IP\" : \"%s\"\n", ip);
+	strcat(OutputBuf, buf);
+	sprintf(buf, "}\n");
+	strcat(OutputBuf, buf);
+	return 1;
+    //neccessary register info
 }
-bool Request_Return_AP_Info()
+int Request_Return_AP_Info(uint32_t AP_Number, char * OutputBuf)
 {
+	sprintf(OutputBuf, "{\n");
+	sprintf(buf, "\"Action\" : 2\n");
+	strcat(OutputBuf, buf);
+	sprintf(buf, "\"AP Number\" : \"%u\"\n", AP_Number);
+	strcat(OutputBuf, buf);
+	sprintf(buf, "}\n");
+	strcat(OutputBuf, buf);
+	return 1;
 }
-bool Request_User_IsRegistered()
+int Request_User_IsRegistered(const char * Username, char * OutputBuf)
 {
+	sprintf(OutputBuf, "{\n");
+	sprintf(buf, "\"Action\" : 3\n");
+	strcat(OutputBuf, buf);
+	sprintf(buf, "\"Username\" : \"%s\"\n", Username);
+	strcat(OutputBuf, buf);
+	sprintf(buf, "}\n");
+	strcat(OutputBuf, buf);
+	return 1;
 }
-bool Request_Check_User_Password()
+int Request_Check_User_Password(const char * Hashed_Password, char * OutputBuf)
 {
+	sprintf(OutputBuf, "{\n");
+	sprintf(buf, "\"Action\" : 4\n");
+	strcat(OutputBuf, buf);
+	sprintf(buf, "\"Password\" : \"%s\"\n", Hashed_Password);
+	strcat(OutputBuf, buf);
+	sprintf(buf, "}\n");
+	strcat(OutputBuf, buf);
+	return 1;
 }
-bool Request_Send_User_Info()
+int Request_Send_User_Info(uint32_t AP_Number, char * OutputBuf)
 {
+	sprintf(OutputBuf, "{\n");
+	sprintf(buf, "\"Action\" : 5\n");
+	strcat(OutputBuf, buf);
+	sprintf(buf, "\"AP Number\" : \"%d\"\n", AP_Number);
+	strcat(OutputBuf, buf);
+	sprintf(buf, "}\n");
+	strcat(OutputBuf, buf);
+	return 1;
 }
-bool Request_Upload_Config()
+int Request_Upload_Config(uint32_t AP_Number, const char * ConfigLocation, char * OutputBuf)
 {
+	sprintf(OutputBuf, "{\n");
+	sprintf(buf, "\"Action\" : 6\n");
+	strcat(OutputBuf, buf);
+	sprintf(buf, "\"AP Number\" : \"%d\"\n", AP_Number);
+	strcat(OutputBuf, buf);
+	sprintf(buf, "\"Config Archive Location\" : \"%s\"\n", ConfigLocation);
+	strcat(OutputBuf, buf);
+	sprintf(buf, "}\n");
+	strcat(OutputBuf, buf);
+	return 1;
 }
-bool Request_Download_Config()
+int Request_Download_Config(const char * ConfigLocation, char * OutputBuf)
 {
+	sprintf(OutputBuf, "{\n");
+	sprintf(buf, "\"Action\" : 7\n");
+	strcat(OutputBuf, buf);
+	sprintf(buf, "\"Config Archive Location\" : \"%s\"\n", ConfigLocation);
+	strcat(OutputBuf, buf);
+	sprintf(buf, "}\n");
+	strcat(OutputBuf, buf);
+	return 1;
 }
 //---------Response------------
-bool Response_Controller_Alive()
+int Response_Controller_Alive()
 {
 }
-bool Response_Register_AP()
+int Response_Register_AP()
 {
 }
-bool Response_Return_AP_Info()
+int Response_Return_AP_Info()
 {
 }
-bool Response_User_IsRegistered()
+int Response_User_IsRegistered()
 {
 }
-bool Response_Check_User_Password()
+int Response_Check_User_Password()
 {
 }
-bool Response_Send_User_Info()
+int Response_Send_User_Info()
 {
 }
-bool Response_Upload_Config()
+int Response_Upload_Config()
 {
 }
-bool Response_Download_Config()
+int Response_Download_Config()
 {
 }
