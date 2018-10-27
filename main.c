@@ -7,8 +7,12 @@
 #include "config.h"
 int main()
 {
-	char ip_address[100] = "35.189.168.208";
-	int port = 27015;
+	char ip_address[100];
+	ConfigQuery ConfigBuf;
+	Config = Load_Config_String("./config/connectconfig", "IP_Address");
+	strcpy(ip_address, Config.StringData);
+	Config = Load_Config_IntData("./config/connectconfig", "IP_Address");
+	int port = Config.IntData;
 
 
 	struct sockaddr_in serveraddr;
@@ -32,7 +36,6 @@ int main()
 	char send_buf[1000];
 	char recv_buf[1000];
 	int send_fail;
-	printf("Send Message: ");
 	while(fgets(send_buf, sizeof(send_buf), stdin))
 	{
 		send_fail = send(socket_fd, send_buf, sizeof(send_buf), 0);

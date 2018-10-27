@@ -3,10 +3,16 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <errno.h>
+
+#include "config.h"
 int main()
 {
-	char ip_address[100] = "35.189.168.208";
-	int port = 27015;
+	char ip_address[100];
+	ConfigQuery ConfigBuf;
+	Config = Load_Config_String("./config/connectconfig", "IP_Address");
+	strcpy(ip_address, Config.StringData);
+	Config = Load_Config_IntData("./config/connectconfig", "IP_Address");
+	int port = Config.IntData;
 
 
 	struct sockaddr_in serveraddr;
