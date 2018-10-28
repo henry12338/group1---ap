@@ -102,7 +102,7 @@ ConfigQuery Load_Config_IntData(const char * FileName, const char * Key)
 			Line[strlen(Line)-1] = 0;
 		}
 		
-		sscanf(Line, "%s = %s", LineKey, &LineValue);
+		sscanf(Line, "%s = %s", LineKey, LineValue);
 		if(strcmp(Key, LineKey) == 0)
 		{
 			gotcha = 1;
@@ -141,7 +141,7 @@ ConfigQuery Load_Config_UIntData(const char * FileName, const char * Key)
 			Line[strlen(Line)-1] = 0;
 		}
 		
-		sscanf(Line, "%s = %s", LineKey, &LineValue);
+		sscanf(Line, "%s = %s", LineKey, LineValue);
 		if(strcmp(Key, LineKey) == 0)
 		{
 			gotcha = 1;

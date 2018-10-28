@@ -6,9 +6,13 @@
 #include <sys/types.h>
 #include <sys/select.h>
 #include <arpa/inet.h>
+#include <unistd.h>
 #include <errno.h>
+#include <netdb.h>
 
+#include "JSON_action.h"
 #include "config.h"
+#include "update.h"
 int main()
 {
 	char ip_address[100] = {};
@@ -25,6 +29,17 @@ int main()
 		}
 		strcpy(DNS_address, ConfigBuf.StringData);
 		printf("Load DNS: %s\n", DNS_address);
+		struct hostent* HostInfo;
+
+		/* get IP address from name */
+		HostInfo = gethostbyname(DNS_address);
+
+		if(!HostInfo)
+		{
+		    printf("Could not resolve host name\n");
+		    return -10;
+		}
+		sprintf(ip_address, "%hhu.%hhu.%hhu.%hhu", HostInfo->h_addr_list[0][0], HostInfo->h_addr_list[0][1], HostInfo->h_addr_list[0][2], HostInfo->h_addr_list[0][3]);
 	}
 	else
 	{
@@ -57,34 +72,47 @@ int main()
 	char send_buf[1000];
 	char recv_buf[1000];
 	int send_fail;
-	while(fgets(send_buf, sizeof(send_buf), stdin))
+	fd_set read_fd;
+	while(1)
 	{
-		//send and recv simultaneously
-		fd_set read_fd, write_fd;
 		struct timeval tv;
-		tv.tv_sec = 0;
+		tv.tv_sec = 5;
 		tv.tv_usec = 0;
-		FD_ZERO(&read_fd);
-		FD_ZERO(&write_fd);		
+		FD_ZERO(&read_fd);		
 		FD_SET(socket_fd, &read_fd);
-		//FD_SET( socket_fd, &write_fd);
-		FD_SET(0, &write_fd);
-		
-		if(select(socket_fd+1, &read_fd, &write_fd, NULL, &tv) < 0)
+		FD_SET(STDIN_FILENO, &read_fd);
+		if(select(socket_fd+1, &read_fd, NULL, NULL, &tv) <= 0)
 		{
-			puts("select() failed");
-			return -4;
+			puts("select field failed");
+			break;
+		}
+		if(FD_ISSET(STDIN_FILENO, &read_fd))
+		{
+			if(getchar() && Request_Controller_Alive(send_buf) == 1)
+			{
+				printf("Send JSON to server:\n");
+				printf("%s", send_buf);
+			}
+			if(send_buf[0])
+				send_fail = send(socket_fd, send_buf, strlen(send_buf)+1, 0);
+			send_buf[0] = 0;
+			if(send_fail < 0)
+			{
+				printf("Send JSON Failed\n");
+				break;
+			}
 		}
 		if(FD_ISSET(socket_fd, &read_fd))
 		{
-			recv(socket_fd, recv_buf, 1000, 0);
-			printf("Received result from server = %s\n", recv_buf);
-		}
-		if( FD_ISSET( 0, &write_fd)) {
-			fgets(send_buf, sizeof(send_buf), stdin);
-			send_fail = send(socket_fd, send_buf, strlen(send_buf), 0);
-			printf("-------------Sent %d bytes to server--------------\n", send_buf);
+			if(recv(socket_fd, recv_buf, 1000, 0) > 0)
+			{
+				printf("Received result from server = %s\n", recv_buf);
+			}
+			else
+			{
+				break;
+			}
 		}
 	}
-	shutdown(socket_fd, 2);
+	close(socket_fd);
 }

@@ -1,6 +1,5 @@
 #ifndef JSON_ACTION_H
 	#define JSON_ACTION_H
-	#include <stdint.h>
 	int Request_Controller_Alive(char * OutputBuf);
 	int Request_Register_AP(const char * ip, char * OutputBuf);
 	int Request_Return_AP_Info(uint32_t AP_Number, char * OutputBuf);
