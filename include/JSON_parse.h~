@@ -1,0 +1,20 @@
+#ifndef JSON_ACTION_H
+	#define JSON_ACTION_H
+	bool Request_Controller_Alive();
+	bool Request_Register_AP();
+	bool Request_Return_AP_Info();
+	bool Request_User_IsRegistered();
+	bool Request_Check_User_Password();
+	bool Request_Send_User_Info();
+	bool Request_Upload_Config();
+	bool Request_Download_Config();
+
+	bool Request_Controller_Alive();
+	bool Request_Register_AP();
+	bool Request_Return_AP_Info();
+	bool Request_User_IsRegistered();
+	bool Request_Check_User_Password();
+	bool Request_Send_User_Info();
+	bool Request_Upload_Config();
+	bool Request_Download_Config();
+#endif
