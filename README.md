@@ -1,6 +1,6 @@
 # How to....
 
-Read [how_to_test](https://github.com/refill12338/group1---ap/blob/master/How_To_test) to see how to test
+Read [how_to_test](https://github.com/refill12338/group1---ap/blob/master/How_to_test) to see how to test
 Read [how_to_git](https://github.com/refill12338/group1---ap/blob/master/How_To_git) to see how to git
 
 # Changelog

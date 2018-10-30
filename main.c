@@ -70,9 +70,11 @@ int main()
 		return -2;
 	}
 	char send_buf[1000];
+	char send_buf_buf[1000];
 	char recv_buf[1000];
 	int send_fail;
 	fd_set read_fd;
+	int action;
 	while(1)
 	{
 		struct timeval tv;
@@ -88,14 +90,21 @@ int main()
 		}
 		if(FD_ISSET(STDIN_FILENO, &read_fd))
 		{
-			if(getchar() && Request_Controller_Alive(send_buf) == 1)
+			scanf("%d", &action);
+			if(action == 0)
 			{
-				printf("Send JSON to server:\n");
-				printf("%s", send_buf);
+				if(Request_Controller_Alive(send_buf) == 1)
+				{
+					sprintf(send_buf_buf, "%s", send_buf);
+					printf("Send JSON to server:\n");				
+					printf("%s", send_buf_buf);
+				}
 			}
-			if(send_buf[0])
-				send_fail = send(socket_fd, send_buf, strlen(send_buf)+1, 0);
-			send_buf[0] = 0;
+			else if(action == 1)
+			{
+				
+			}
+			send_fail = send(socket_fd, send_buf_buf, strlen(send_buf_buf)+1, 0);
 			if(send_fail < 0)
 			{
 				printf("Send JSON Failed\n");
