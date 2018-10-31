@@ -11,10 +11,17 @@
 #include <netdb.h>
 
 #include "JSON_action.h"
+#include "JSON_request_handle.h"
 #include "config.h"
 #include "update.h"
 int main()
 {
+	char InputBuf[1000];
+	strcpy(InputBuf, "{\n	\"Action\" : 2,\n	\"AP Number\" : 4\n}\n");
+	Handle_Action(InputBuf, 0);
+
+
+
 	char ip_address[100] = {};
 	char DNS_address[200] = {};
 	ConfigQuery ConfigBuf;

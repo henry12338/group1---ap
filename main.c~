@@ -11,10 +11,17 @@
 #include <netdb.h>
 
 #include "JSON_action.h"
+#include "JSON_request_handle.h"
 #include "config.h"
 #include "update.h"
 int main()
 {
+	char InputBuf[1000];
+	strcpy(InputBuf, "{\n	\"Action\": 2,\n	\"AP Number\": 4\n}\n");
+	Handle_Action(InputBuf, 0);
+
+
+
 	char ip_address[100] = {};
 	char DNS_address[200] = {};
 	ConfigQuery ConfigBuf;
@@ -95,7 +102,7 @@ int main()
 			{
 				if(Request_Controller_Alive(send_buf) == 1)
 				{
-					sprintf(send_buf_buf, "RAW\n %s", send_buf);
+					sprintf(send_buf_buf, "%s", send_buf);
 					printf("Send JSON to server:\n");				
 					printf("%s", send_buf_buf);
 				}

@@ -6,24 +6,29 @@ Read [how_to_git](https://github.com/refill12338/group1---ap/blob/master/How_To_
 # Changelog
 2018/10/27 21:49(UTC +8)
 
-Add some function to JSON_action.c JSON_action.h
+(Edge)Add some function to JSON_action.c JSON_action.h
 
-Complete config.c config.h's content, not tested yet 
+(Edge)Complete config.c config.h's content, not tested yet 
 
-Add update.h update.c to support update function
+(Edge)Add update.h update.c to support update function
 
 2018/10/27 22:21(UTC +8)
 
-Add some functionality to JSON_action.c
+(Edge)Add some functionality to JSON_action.c
 
 2018/10/27 23:01(UTC +8)
 
-Add makefile to make file
+(Edge)Add makefile to make file
 
-Fix config.c request function buf variable not defined problem 
+(Edge)Fix config.c request function buf variable not defined problem 
 
-Transmit data simultaneously for recv() and send()
+(Edge)Transmit data simultaneously for recv() and send()
 
 2018/10/30 11:57(UTC +8)
 
-Add help to README.md
+(Edge)Add help to README.md
+
+2018/11/1 12:56(UTC +8)
+
+(Edge)Add some handle function to the request from controller in JSON.
++JSON_request_handle.c JSON_request_handle.h

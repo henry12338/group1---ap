@@ -1,0 +1,56 @@
+#include "JSON_request_handle.h"
+#include "mjson.h"
+
+int Handle_Action(const char * InputBuf, int socket_fd)
+{
+	double action = mjson_find_number(InputBuf, sizeof(InputBuf), "$.Action", -1);
+	if(action == 2)
+	{
+		return Handle_Return_AP_Info(InputBuf, socket_fd);
+	}
+	else if(action == 5)
+	{
+		return Handle_Send_User_Info(InputBuf, socket_fd);
+	}
+	else if(action == 7)
+	{
+		return Handle_Download_Config(InputBuf, socket_fd);
+	}
+	else
+	{
+		return -1;
+	}
+}
+int Handle_Return_AP_Info(const char * InputBuf, int socket_fd)
+{
+	strcpy(InputBuf, "{\n\"AP Number\" : 4\n}\n");
+	double ap_number = mjson_find_number(InputBuf, sizeof(InputBuf), "$.AP Number", -1);
+	printf("AP Number is %u\n", (uint64_t)ap_number);
+	char OutputBuf[1000];
+	char Buf[1000];
+	sprintf(OutputBuf, "{\n");
+	sprintf(Buf, "	\"Action\" : 2,\n");
+	strcat(OutputBuf, Buf);
+	sprintf(Buf, "	\"AP Number\" : %u,\n", );
+	strcat(OutputBuf, Buf);
+	sprintf(Buf, "	\"AP CPU temperature(Celcius)\" : %u,\n", );
+	strcat(OutputBuf, Buf);
+	sprintf(Buf, "	\"AP CPU Usage Percent\" : %.2f,\n", );
+	strcat(OutputBuf, Buf);
+	sprintf(Buf, "	\"Connect Device Amount\" : %u,\n", );
+	strcat(OutputBuf, Buf);
+	sprintf(Buf, "	\"Network Traffic(KiB)\" : %u\n", );
+	strcat(OutputBuf, Buf);
+
+	return send(socket_fd, OutputBuf, strlen(OutputBuf)+1, 0);
+}
+int Handle_Send_User_Info(const char * InputBuf, int socket_fd)
+{
+	char OutputBuf[1000];
+	return send(socket_fd, OutputBuf, strlen(OutputBuf)+1, 0);
+}
+int Handle_Download_Config(const char * InputBuf, int socket_fd)
+{
+	char OutputBuf[1000];
+	return send(socket_fd, OutputBuf, strlen(OutputBuf)+1, 0);
+}

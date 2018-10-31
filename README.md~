@@ -20,10 +20,15 @@ Add some functionality to JSON_action.c
 
 Add makefile to make file
 
-Fix config.c request function buf variable not defined problem 
+(Edge)Fix config.c request function buf variable not defined problem 
 
-Transmit data simultaneously for recv() and send()
+(Edge)Transmit data simultaneously for recv() and send()
 
 2018/10/30 11:57(UTC +8)
 
-Add help to README.md
+(Edge)Add help to README.md
+
+2018/11/1 12:56(UTC +8)
+
+(Edge)Add some handle function to the request from controller in JSON.
++JSON_request_handle.c JSON_request_handle.h

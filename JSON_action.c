@@ -18,7 +18,7 @@ int Request_Register_AP(const char * ip, char * OutputBuf)
 {
 	char buf[200];
 	sprintf(OutputBuf, "{\n");
-	sprintf(buf, "	\"Action\" : 1\n");
+	sprintf(buf, "	\"Action\" : 1,\n");
 	strcat(OutputBuf, buf);
 	sprintf(buf, "	\"AP out IP\" : \"%s\"\n", ip);
 	strcat(OutputBuf, buf);
@@ -31,7 +31,7 @@ int Request_Return_AP_Info(uint32_t AP_Number, char * OutputBuf)
 {
 	char buf[200];
 	sprintf(OutputBuf, "{\n");
-	sprintf(buf, "	\"Action\" : 2\n");
+	sprintf(buf, "	\"Action\" : 2,\n");
 	strcat(OutputBuf, buf);
 	sprintf(buf, "	\"AP Number\" : %u\n", AP_Number);
 	strcat(OutputBuf, buf);
@@ -43,7 +43,7 @@ int Request_User_IsRegistered(const char * Username, char * OutputBuf)
 {
 	char buf[200];
 	sprintf(OutputBuf, "{\n");
-	sprintf(buf, "	\"Action\" : 3\n");
+	sprintf(buf, "	\"Action\" : 3,\n");
 	strcat(OutputBuf, buf);
 	sprintf(buf, "	\"Username\" : \"%s\"\n", Username);
 	strcat(OutputBuf, buf);
@@ -55,7 +55,7 @@ int Request_Check_User_Password(const char * Hashed_Password, char * OutputBuf)
 {
 	char buf[200];
 	sprintf(OutputBuf, "{\n");
-	sprintf(buf, "	\"Action\" : 4\n");
+	sprintf(buf, "	\"Action\" : 4,\n");
 	strcat(OutputBuf, buf);
 	sprintf(buf, "	\"Password\" : \"%s\"\n", Hashed_Password);
 	strcat(OutputBuf, buf);
@@ -67,7 +67,7 @@ int Request_Send_User_Info(uint32_t AP_Number, char * OutputBuf)
 {
 	char buf[200];
 	sprintf(OutputBuf, "{\n");
-	sprintf(buf, "	\"Action\" : 5\n");
+	sprintf(buf, "	\"Action\" : 5,\n");
 	strcat(OutputBuf, buf);
 	sprintf(buf, "	\"AP Number\" : %d\n", AP_Number);
 	strcat(OutputBuf, buf);
@@ -79,9 +79,9 @@ int Request_Upload_Config(uint32_t AP_Number, const char * ConfigLocation, char 
 {
 	char buf[200];
 	sprintf(OutputBuf, "{\n");
-	sprintf(buf, "	\"Action\" : 6\n");
+	sprintf(buf, "	\"Action\" : 6,\n");
 	strcat(OutputBuf, buf);
-	sprintf(buf, "	\"AP Number\" : \"%d\"\n", AP_Number);
+	sprintf(buf, "	\"AP Number\" : \"%d\",\n", AP_Number);
 	strcat(OutputBuf, buf);
 	sprintf(buf, "	\"Config Archive Location\" : \"%s\"\n", ConfigLocation);
 	strcat(OutputBuf, buf);
@@ -93,7 +93,7 @@ int Request_Download_Config(const char * ConfigLocation, char * OutputBuf)
 {
 	char buf[200];
 	sprintf(OutputBuf, "{\n");
-	sprintf(buf, "	\"Action\" : 7\n");
+	sprintf(buf, "	\"Action\" : 7,\n");
 	strcat(OutputBuf, buf);
 	sprintf(buf, "	\"Config Archive Location\" : \"%s\"\n", ConfigLocation);
 	strcat(OutputBuf, buf);
@@ -106,7 +106,7 @@ int Response_Controller_Alive(char * OutputBuf)
 {
     char buf[200];
     sprintf(OutputBuf,"{\n");
-    sprintf(buf, "	\"Action\" : 0\n");
+    sprintf(buf, "	\"Action\" : 0,\n");
     strcat(OutputBuf, buf);
     sprintf(buf, "	\"State\" : 1\n");
     strcat(OutputBuf, buf);
@@ -118,7 +118,7 @@ int Response_Register_AP(uint32_t AP_Number, char * OutputBuf)
 {
     char buf[200];
     sprintf(OutputBuf,"{\n");
-    sprintf(buf, "	\"Action\" : 1\n");
+    sprintf(buf, "	\"Action\" : 1,\n");
     strcat(OutputBuf, buf);
     sprintf(buf, "	\"AP Number\" : %d\n", AP_Number);
     strcat(OutputBuf, buf);
@@ -130,15 +130,15 @@ int Response_Return_AP_Info(uint32_t AP_Number, char * OutputBuf, uint32_t AP_Te
 {
     char buf[200];
     sprintf(OutputBuf,"{\n");
-    sprintf(buf, "	\"Action\" : 2\n");
+    sprintf(buf, "	\"Action\" : 2,\n");
     strcat(OutputBuf, buf);
-    sprintf(buf, "	\"AP Number\" : %u\n", AP_Number);
+    sprintf(buf, "	\"AP Number\" : %u,\n", AP_Number);
     strcat(OutputBuf, buf);
-    sprintf(buf, "	\"AP CPU temperature(Celcius)\" : %u\n", AP_Temperature);
+    sprintf(buf, "	\"AP CPU temperature(Celcius)\" : %u,\n", AP_Temperature);
     strcat(OutputBuf, buf);
-    sprintf(buf, "	\"AP CPU Usage Percent\" : %.2f\n", AP_Usage_Percent);
+    sprintf(buf, "	\"AP CPU Usage Percent\" : %.2f,\n", AP_Usage_Percent);
     strcat(OutputBuf, buf);
-    sprintf(buf, "	\"Connect Device Amount\" : %u\n", AP_Device_Amount);
+    sprintf(buf, "	\"Connect Device Amount\" : %u,\n", AP_Device_Amount);
     strcat(OutputBuf, buf);
     sprintf(buf, "	\"Traffic(KiB)\" : %u\n", AP_Traffic);
     strcat(OutputBuf, buf);
@@ -150,7 +150,7 @@ int Response_User_IsRegistered(int IsRegistered, char * OutputBuf)
 {
     char buf[200];
     sprintf(OutputBuf,"{\n");
-    sprintf(buf, "	\"Action\" : 3\n");
+    sprintf(buf, "	\"Action\" : 3,\n");
     strcat(OutputBuf, buf);
     sprintf(buf, "	\"Result\" : %d\n", IsRegistered);
     strcat(OutputBuf, buf);
@@ -162,7 +162,7 @@ int Response_Check_User_Password(int CheckPassword, char * OutputBuf)
 {
     char buf[200];
     sprintf(OutputBuf,"{\n");
-    sprintf(buf, "	\"Action\" : 4\n");
+    sprintf(buf, "	\"Action\" : 4,\n");
     strcat(OutputBuf, buf);
     sprintf(buf, "	\"Result\" : %d\n", CheckPassword);
     strcat(OutputBuf, buf);
@@ -174,9 +174,9 @@ int Response_Send_User_Info(const char * ip, const char *Username, char * Output
 {
     char buf[200];
     sprintf(OutputBuf,"{\n");
-    sprintf(buf, "	\"Action\" : 5\n");
+    sprintf(buf, "	\"Action\" : 5,\n");
     strcat(OutputBuf, buf);
-    sprintf(buf, "	\"User Out IP\" : \"%s\"\n", ip);
+    sprintf(buf, "	\"User Out IP\" : \"%s\",\n", ip);
     strcat(OutputBuf, buf);
     sprintf(buf, "	\"Username\" : \"%s\"\n", Username);
     strcat(OutputBuf, buf);
@@ -188,9 +188,9 @@ int Response_Upload_Config(uint32_t AP_Number, const char * ConfigLocation, char
 {
     char buf[200];
     sprintf(OutputBuf,"{\n");
-    sprintf(buf, "	\"Action\" : 6\n");
+    sprintf(buf, "	\"Action\" : 6,\n");
     strcat(OutputBuf, buf);
-    sprintf(buf, "	\"AP Number\" : %u\n", AP_Number);
+    sprintf(buf, "	\"AP Number\" : %u,\n", AP_Number);
     strcat(OutputBuf, buf);
     sprintf(buf, "	\"Config Archive Location\" : \"%s\"\n", ConfigLocation);
     strcat(OutputBuf, buf);
@@ -202,7 +202,7 @@ int Response_Download_Config(const char * ConfigLocation, char * OutputBuf)
 {
     char buf[200];
     sprintf(OutputBuf,"{\n");
-    sprintf(buf, "	\"Action\" : 7\n");
+    sprintf(buf, "	\"Action\" : 7,\n");
     strcat(OutputBuf, buf);
     sprintf(buf, "	\"Config Archive Location\" : \"%s\"\n", ConfigLocation);
     strcat(OutputBuf, buf);
