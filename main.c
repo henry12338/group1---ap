@@ -79,15 +79,14 @@ int main()
 	while(1)
 	{
 		struct timeval tv;
-		tv.tv_sec = 5;
+		tv.tv_sec = 2;
 		tv.tv_usec = 0;
 		FD_ZERO(&read_fd);		
 		FD_SET(socket_fd, &read_fd);
 		FD_SET(STDIN_FILENO, &read_fd);
 		if(select(socket_fd+1, &read_fd, NULL, NULL, &tv) <= 0)
 		{
-			puts("select field failed");
-			break;
+			puts("Wait Server...");
 		}
 		if(FD_ISSET(STDIN_FILENO, &read_fd))
 		{
@@ -122,7 +121,7 @@ int main()
 			if(recv(socket_fd, recv_buf, 1000, 0) > 0)
 			{
 				printf("Received JSON from server:\n%s\n", recv_buf);
-				Handle_action(recv_buf, socket_fd);
+				Handle_Action(recv_buf, socket_fd);
 			}
 			else
 			{

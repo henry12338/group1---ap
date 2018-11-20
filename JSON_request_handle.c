@@ -1,6 +1,7 @@
-#include "JSON_request_handle.h"
 #include "mjson.h"
+#include "JSON_request_handle.h"
 #include <stdint.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sys/socket.h>
 
@@ -35,6 +36,17 @@ int Handle_Return_AP_Info(const char * InputBuf, int socket_fd)
 	double AP_Usage_Percent;
 
 	//go get the infoooooo
+
+	system("cat /proc/stat | grep 'cpu ' /proc/stat | awk '{usage=($2+$4)*100/($2+$4+$5)} END {print usage}' > /cpu_usage_record");
+	FILE * fp = fopen("/cpu_usage_record", "r");	
+	if(!fp)
+	{
+		return -1;
+	}
+	fscanf(fp, "%lf", &AP_Usage_Percent);
+	fclose(fp);
+	
+
 	printf("AP Traffic is %u(KiB)\n", AP_Traffic);
 	printf("AP Usage Percent is %.2f\n", AP_Usage_Percent);
 
@@ -53,7 +65,7 @@ int Handle_Send_Connected_User_Number(const char * InputBuf, int socket_fd)
 
 	char OutputBuf[1000];
         const int length = 1000;
-        snprintf(OutputBuf, length, "{\n  \"Action\" : 5,\n  \"AP Number\" : %u,\n  \"Connected User Number\" : %u\n}\n", (uint32_t)AP_Number,Connected_User_Number);
+        snprintf(OutputBuf, length, "{\n  \"Action\" : 5,\n  \"Connected User Number\" : %u\n}\n", Connected_User_Number);
 	return send(socket_fd, OutputBuf, strlen(OutputBuf)+1, 0);
 
 }

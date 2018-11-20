@@ -1,5 +1,5 @@
-#include "JSON_action.h"
 #include "mjson.h"
+#include "JSON_action.h"
 #include <string.h>
 #include <stdio.h>
 #include <stdint.h>
@@ -15,24 +15,8 @@ int Request_Register_AP(const char * mac, const char * SSID, char * OutputBuf, i
 	return ret_value>=0&&ret_value<length;
     //neccessary register info
 }
-int Request_Upload_Config(uint32_t AP_Number, const char * ConfigLocation, char * OutputBuf, int length)
+int Request_Upload_Config(const char * ConfigLocation, char * OutputBuf, int length)
 {
-        int ret_value = snprintf(OutputBuf, length, "{\n  \"Action\" : 6,\n  \"AP Number\" : \"%u\",\n  \"Config Archive Location\" : \"%s\"\n}\n", AP_Number, ConfigLocation);
-	return ret_value>=0&&ret_value<length;
-}
-//---------Response------------
-int Response_Return_AP_Info(uint32_t AP_Number, char * OutputBuf, int length, uint32_t AP_Temperature, double AP_Usage_Percent, uint32_t AP_Device_Amount, uint32_t AP_Traffic)
-{
-	int ret_value = snprintf(OutputBuf, length, "{\n  \"Action\" : 2,\n  \"AP Number\" : %u,\n  \"AP CPU temperture\" : %u,\n  \"AP CPU Usage Percent\" : %.2f,\n  \"Connect Device Amount\" : %u,\n  \"Traffic(Kib)\" : %u\n}\n", AP_Number, AP_Temperature, AP_Usage_Percent, AP_Device_Amount, AP_Traffic);
-	return ret_value>=0&&ret_value<length;
-}
-int Response_Send_User_Info(const char * ip, const char *Username, char * OutputBuf, int length)
-{
-	int ret_value = snprintf(OutputBuf, length, "{\n  \"Action\" : 5,\n  \"User Out IP\" : \"%s\",\n  \"Username\" : \"%s\"\n}\n", ip, Username);
-	return ret_value>=0&&ret_value<length;
-}
-int Response_Download_Config(const char * ConfigLocation, char * OutputBuf, int length)
-{
-	int ret_value = snprintf(OutputBuf, length, "{\n  \"Action\" : 7,\n  \"Config Archive Location\" : \"%s\"\n}\n", ConfigLocation);
+        int ret_value = snprintf(OutputBuf, length, "{\n  \"Action\" : 6,\n  \"Config Archive Location\" : \"%s\"\n}\n", ConfigLocation);
 	return ret_value>=0&&ret_value<length;
 }
