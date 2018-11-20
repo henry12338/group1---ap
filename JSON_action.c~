@@ -1,5 +1,5 @@
-//#include "JSON_action.h"
-//#include "mjson.h"
+#include "JSON_action.h"
+#include "mjson.h"
 #include <string.h>
 #include <stdio.h>
 #include <stdint.h>
