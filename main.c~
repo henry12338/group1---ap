@@ -16,12 +16,6 @@
 #include "update.h"
 int main()
 {
-	char InputBuf[1000];
-	strcpy(InputBuf, "{\n	\"Action\": 2,\n	\"AP Number\": 4\n}\n");
-	Handle_Action(InputBuf, 0);
-
-
-
 	char ip_address[100] = {};
 	char DNS_address[200] = {};
 	ConfigQuery ConfigBuf;
@@ -100,16 +94,21 @@ int main()
 			scanf("%d", &action);
 			if(action == 0)
 			{
-				if(Request_Controller_Alive(send_buf) == 1)
+				if(Request_Controller_Alive(send_buf, 1000) == 1)
 				{
 					sprintf(send_buf_buf, "%s", send_buf);
-					printf("Send JSON to server:\n");				
+					printf("Send Action 0 to server:\n");				
 					printf("%s", send_buf_buf);
 				}
 			}
 			else if(action == 1)
 			{
-				
+				if(Request_Controller_Alive(send_buf, 1000) == 1)
+				{
+					sprintf(send_buf_buf, "%s", send_buf);
+					printf("Send JSON to server:\n");				
+					printf("%s", send_buf_buf);
+				}
 			}
 			send_fail = send(socket_fd, send_buf_buf, strlen(send_buf_buf)+1, 0);
 			if(send_fail < 0)
@@ -122,7 +121,8 @@ int main()
 		{
 			if(recv(socket_fd, recv_buf, 1000, 0) > 0)
 			{
-				printf("Received result from server = %s\n", recv_buf);
+				printf("Received JSON from server:\n%s\n", recv_buf);
+				Handle_action(recv_buf, socket_fd);
 			}
 			else
 			{

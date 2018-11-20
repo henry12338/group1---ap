@@ -32,3 +32,7 @@ Read [how_to_git](https://github.com/refill12338/group1---ap/blob/master/How_To_
 
 (Edge)Add some handle function to the request from controller in JSON.
 +JSON_request_handle.c JSON_request_handle.h
+
+2018/11/20 11:29(UTC +8)
+(Henry) Update sprintf to snprintf to increase safety
+(Edge) Modify some JSON_request_handle JSON_action to fit [JSON](https://hackmd.io/H2n8ktZCSh6mbbKU3Sw-fg?both)'s need

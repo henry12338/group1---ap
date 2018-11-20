@@ -42,7 +42,8 @@ int main()
 	struct sockaddr_in clientaddr;
 	int clientsocket_fd;
 	size_t addr_len = sizeof(clientaddr);
-	clientsocket_fd = accept(socket_fd, (struct sockaddr *) &clientaddr, &addr_len);	
+	clientsocket_fd = accept(socket_fd, (struct sockaddr *) &clientaddr, &addr_len);
+	printf("Client IP is %s\n", inet_ntoa(clientaddr));
 	char recv_buf[1000];
 	char send_buf[1000];
 	int send_fail;

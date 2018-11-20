@@ -7,7 +7,7 @@
 int Handle_Action(const char * InputBuf, int socket_fd)
 {
 	double action = mjson_find_number(InputBuf, strlen(InputBuf), "$.Action", -1);
-	printf("Go To Action %d\n", (int)action);
+	printf("Action is %d\n", (int)action);
 	if(action == 2)
 	{
 		return Handle_Return_AP_Info(InputBuf, socket_fd);
@@ -20,7 +20,7 @@ int Handle_Action(const char * InputBuf, int socket_fd)
 	{
 		return Handle_Send_User_Info(InputBuf, socket_fd);
 	}
-	else if(action == 8)
+	else if(action == 7)
 	{
 		return Handle_Download_Config(InputBuf, socket_fd);
 	}
@@ -31,29 +31,22 @@ int Handle_Action(const char * InputBuf, int socket_fd)
 }
 int Handle_Return_AP_Info(const char * InputBuf, int socket_fd)
 {
-	double AP_Number = mjson_find_number(InputBuf, strlen(InputBuf), "$.AP Number", -1);
-	uint32_t AP_Temperature, AP_Device_Amount, AP_Traffic;
+	uint32_t AP_Device_Amount, AP_Traffic;
 	double AP_Usage_Percent;
 
 	//go get the infoooooo
-	printf("AP Number is %u\n", (uint32_t)AP_Number);
-	printf("AP Temperature is %u\n", AP_Temperature);
-	printf("AP Connected Device Amount is %u\n", AP_Device_Amount);
 	printf("AP Traffic is %u(KiB)\n", AP_Traffic);
 	printf("AP Usage Percent is %.2f\n", AP_Usage_Percent);
 
-
 	char OutputBuf[1000];
         const int length = 1000;
-        snprintf(OutputBuf, length, "{\n  \"Action\" :2,\n  \"AP Number\" : %u,\n  \"AP CPUT temperature(Celcius)\" : %u,\n  \"AP CPU Usage Percent\" :%.2f,\n  \"Connect Device Amount\" :%u,\n  \"Network Traffic(KiB)\" : %u\n}\n", (uint32_t)AP_Number, AP_Temperature, AP_Usage_Percent, AP_Device_Amount, AP_Traffic);
+        snprintf(OutputBuf, length, "{\n  \"Action\" :2,\n  \"AP CPU Usage Percent\" :%.2f,\n  \"Network Traffic(KiB)\" : %u\n}\n", AP_Usage_Percent, AP_Traffic);
 	return send(socket_fd, OutputBuf, strlen(OutputBuf)+1, 0);
 }
 int Handle_Send_Connected_User_Number(const char * InputBuf, int socket_fd)
 {
-	double AP_Number = mjson_find_number(InputBuf, strlen(InputBuf), "$.AP Number", -1);
 	uint32_t Connected_User_Number;
 
-	printf("AP Number is %u\n", (uint32_t)AP_Number);
 	//go get the infoooooo
 	printf("AP Connected Device Amount is %u\n", Connected_User_Number);
 
@@ -67,15 +60,12 @@ int Handle_Send_Connected_User_Number(const char * InputBuf, int socket_fd)
 int Handle_Send_User_Info(const char * InputBuf, int socket_fd)
 {
 	char User_External_IP[20], Username[100];
-	double AP_Number = mjson_find_number(InputBuf, strlen(InputBuf), "$.AP Number", -1);
-	printf("AP Number is %u\n", (uint32_t)AP_Number);
-
 	printf("User's External IP is %s\n", User_External_IP);
 	printf("Username is %s\n", Username);
 
 	char OutputBuf[1000];
         const int length = 1000;
-        snprintf(OutputBuf, length, "{\n  \"Action\" : 6,\n  \"AP Number\" : %u,\n  \"User Out IP\" : %s,\n  \"Username\" : %s\n}\n", (uint32_t)AP_Number, User_External_IP, Username);
+        snprintf(OutputBuf, length, "{\n  \"Action\" : 6,\n  \"User Out IP\" : %s,\n  \"Username\" : %s\n}\n", User_External_IP, Username);
 	return send(socket_fd, OutputBuf, strlen(OutputBuf)+1, 0);
 }
 int Handle_Download_Config(const char * InputBuf, int socket_fd)
@@ -85,6 +75,6 @@ int Handle_Download_Config(const char * InputBuf, int socket_fd)
 
 	char OutputBuf[1000];
         const int length = 1000;
-        snprintf(OutputBuf, length, "{\n  \"Action\" : 8,\n  \"Config Archive Location\" : %s\n}\n", Config_Location);
+        snprintf(OutputBuf, length, "{\n  \"Action\" : 7,\n  \"Config Archive Location\" : %s\n}\n", Config_Location);
 	return send(socket_fd, OutputBuf, strlen(OutputBuf)+1, 0);
 }

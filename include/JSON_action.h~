@@ -1,20 +1,60 @@
 #ifndef JSON_ACTION_H
 	#define JSON_ACTION_H
-	int Request_Controller_Alive(char * OutputBuf);
-	int Request_Register_AP(const char * ip, char * OutputBuf);
-	int Request_Return_AP_Info(uint32_t AP_Number, char * OutputBuf);
-	int Request_User_IsRegistered(const char * Username, char * OutputBuf);
-	int Request_Check_User_Password(const char * Hashed_Password, char * OutputBuf);
-	int Request_Send_User_Info(uint32_t AP_Number, char * OutputBuf);
-	int Request_Upload_Config(uint32_t AP_Number, const char * ConfigLocation, char * OutputBuf);
-	int Request_Download_Config(const char * ConfigLocation, char * OutputBuf);
+	#include <stdint.h>
 
-	int Response_Controller_Alive(char * OutputBuf);
-	int Response_Register_AP(uint32_t AP_Number, char * OutputBuf);
-	int Response_Return_AP_Info(uint32_t AP_Number, char * OutputBuf, uint32_t AP_Temperature, double AP_Usage_Percent, uint32_t AP_Device_Amount, uint32_t AP_Traffic);
-	int Response_User_IsRegistered(int IsRegistered, char * OutputBuf);
-	int Response_Check_User_Password(int CheckPassword, char * OutputBuf);
-	int Response_Send_User_Info(const char * ip, const char *Username, char * OutputBuf);
-	int Response_Upload_Config(uint32_t AP_Number, const char * ConfigLocation, char * OutputBuf);
-	int Response_Download_Config(const char * ConfigLocation, char * OutputBuf);
+	/* AP Query Controller if Controller is alive
+		Param:
+	
+		OutputBuf is the string to save JSON content
+		length is OutputBuf's maximum length
+
+		Return value:
+		0 if the OutputBuf cannot contain large data
+		1 if success
+	*/
+	int Request_Controller_Alive(char * OutputBuf, int length);
+
+	/* AP Prompt Controller to register AP
+		Param:
+	
+		mac is AP's MAC address
+		SSID is AP's SSID
+		OutputBuf is the string to save JSON content
+		length is OutputBuf's maximum length
+
+		Return value:
+		0 if the OutputBuf cannot contain large data
+		1 if success
+	*/
+	int Request_Register_AP(const char * mac, const char * SSID, char * OutputBuf, int length);
+
+	/* AP Prompt Controller to download AP's changed setting
+		Param:
+	
+		ConfigLocation is AP's packed changed setting archive
+		OutputBuf is the string to save JSON content
+		length is OutputBuf's maximum length
+
+		Return value:
+		0 if the OutputBuf cannot contain large data
+		1 if success
+	*/
+	int Request_Upload_Config(const char * ConfigLocation, char * OutputBuf, int length);
+
+	//---------Response------------
+
+	/* Controller Prompt AP to give some AP's info
+		Param:
+	
+		ConfigLocation is AP's packed changed setting archive
+		OutputBuf is the string to save JSON content
+		length is OutputBuf's maximum length
+
+		Return value:
+		0 if the OutputBuf cannot contain large data
+		1 if success
+	*/
+	int Response_Return_AP_Info(char * OutputBuf, int length, uint32_t AP_Temperature, double AP_Usage_Percent, uint32_t AP_Device_Amount, uint32_t AP_Traffic);
+	int Response_Send_User_Info(const char * ip, const char *Username, char * OutputBuf, int length);
+	int Response_Download_Config(const char * ConfigLocation, char * OutputBuf, int length);
 #endif
