@@ -1,10 +1,11 @@
 all: main.c update.o JSON_action.o JSON_request_handle.o config.o update_local.o JSON_action_local.o config_local.o JSON_request_handle_local.o
-	mipsel-openwrt-linux-gcc -std=c99 -I./include main.c update.o JSON_action.o JSON_request_handle.o config.o -o ap_client
-	gcc -std=c99 -I./include main.c update_local.o JSON_action_local.o JSON_request_handle_local.o config_local.o -o ap_client_local
-	gcc -std=c99 -I./include test.c JSON_request_handle_local.o -o test_local
+	#mipsel-openwrt-linux-gcc -std=c99 -I./include main.c update.o JSON_action.o JSON_request_handle.o config.o -o ap_client
+	gcc -std=c99 -I./include main.c update_local.o JSON_action_local.o JSON_request_handle_local.o config_local.o -lcurl -o ap_client_local
+	gcc -std=c99 -I./include test.c JSON_request_handle_local.o -lcurl -o testpro
+	gcc -std=c99 -I./include intergrate_test.c update_local.o -lcurl -o intergrate_test
 	rm *.o
 update.o: update.c
-	mipsel-openwrt-linux-gcc -std=c99 -I./include -c update.c -o update.o
+	#mipsel-openwrt-linux-gcc -std=c99 -I./include -c update.c -o update.o
 	gcc -std=c99 -I./include -c update.c -o update_local.o
 JSON_action.o: JSON_action.c
 	mipsel-openwrt-linux-gcc -std=c99 -I./include -c JSON_action.c -o JSON_action.o

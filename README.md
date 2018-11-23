@@ -37,3 +37,9 @@ Read [how_to_git](https://github.com/refill12338/group1---ap/blob/master/How_To_
 
 (Henry) Update sprintf to snprintf to increase safety
 (Edge) Modify some JSON_request_handle JSON_action to fit [JSON](https://hackmd.io/H2n8ktZCSh6mbbKU3Sw-fg?both)'s need
+
+2018/11/23 11:38(UTC +8)
+
+(Edge) Modify [JSON](https://hackmd.io/H2n8ktZCSh6mbbKU3Sw-fg?both)'s Return AP info response
+(Edge) Modify JSON_request_handle to get traffic info
+(Edge) Add function of upload file and download file to FTP server
