@@ -31,7 +31,7 @@
 	/* AP Prompt Controller to download AP's changed setting
 		Param:
 	
-		ConfigLocation is AP's packed changed setting archive
+		ConfigFilename is AP's packed changed setting archive filename
 		OutputBuf is the string to save JSON content
 		length is OutputBuf's maximum length
 
@@ -39,7 +39,7 @@
 		0 if the OutputBuf cannot contain large data
 		1 if success
 	*/
-	int Request_Upload_Config(const char * ConfigLocation, char * OutputBuf, int length);
+	int Request_Upload_Config(char * OutputBuf, int length);
 
 	//---------Response------------
 	//Response will let JSON_request_handle.c to handle

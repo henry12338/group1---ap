@@ -41,5 +41,13 @@ Read [how_to_git](https://github.com/refill12338/group1---ap/blob/master/How_To_
 2018/11/23 11:38(UTC +8)
 
 (Edge) Modify [JSON](https://hackmd.io/H2n8ktZCSh6mbbKU3Sw-fg?both)'s Return AP info response
+
 (Edge) Modify JSON_request_handle to get traffic info
+
 (Edge) Add function of upload file and download file to FTP server
+
+2018/11/26 12:36(UTC +8)
+
+(Edge) Add full function to action 3 "Handle_Change_Config"
+
+(Edge) Add full function to action 7 "Download Config"

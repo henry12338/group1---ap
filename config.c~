@@ -41,7 +41,7 @@ ConfigQuery Load_Config_Character(const char * FileName, const char * Key)
 	}
 	return buf;
 }
-ConfigQuery Load_Config_String(const char * FileName, const char * Key)
+ConfigQuery Load_Config_String(const char * FileName, const char * Key, char * Output, int OutputLength)
 {
 	ConfigQuery buf;
 	FILE * fp = fopen(FileName, "r");
@@ -76,8 +76,7 @@ ConfigQuery Load_Config_String(const char * FileName, const char * Key)
 	}
 	else
 	{
-		buf.StringData = malloc(sizeof(char) * (strlen(LineValue)+1));
-		strcpy(buf.StringData, LineValue);
+		strncpy(Output, LineValue, sizeof(Output));
 	}
 	return buf;
 }
@@ -141,7 +140,7 @@ ConfigQuery Load_Config_UIntData(const char * FileName, const char * Key)
 			Line[strlen(Line)-1] = 0;
 		}
 		
-		sscanf(Line, "%s = %s", LineKey, &LineValue);
+		sscanf(Line, "%s = %s", LineKey, LineValue);
 		if(strcmp(Key, LineKey) == 0)
 		{
 			gotcha = 1;

@@ -1,0 +1,3 @@
+config wifi-ifaceRemember me
+	option kek 1234Remember me
+	option ssid ZhuoTK_SSIDRemember me

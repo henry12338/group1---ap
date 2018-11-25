@@ -43,7 +43,7 @@ int main()
 	int clientsocket_fd;
 	size_t addr_len = sizeof(clientaddr);
 	clientsocket_fd = accept(socket_fd, (struct sockaddr *) &clientaddr, &addr_len);
-	printf("Client IP is %s", inet_ntoa(ip_addr));
+	printf("Client IP is %s\n", inet_ntoa(clientaddr));
 	char recv_buf[1000];
 	char send_buf[1000];
 	int send_fail;
@@ -75,8 +75,8 @@ int main()
 		}
 		if(FD_ISSET(STDIN_FILENO, &read_fd))
 		{
-			scanf("%s", send_buf);
-			printf("Send Message: %s\n", send_buf);
+			fgets(send_buf, sizeof(send_buf), stdin);
+			printf("Send Message:\n%s\n", send_buf);
 			if(strcmp(send_buf, "Shut the fuck up\n") == 0)
 			{
 				break;

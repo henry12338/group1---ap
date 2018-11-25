@@ -1,0 +1,3 @@
+config wifi-iface
+	option kek 1234
+	option ssid ZhuoTK_SSID
