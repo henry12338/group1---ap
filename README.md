@@ -51,3 +51,15 @@ Read [how_to_git](https://github.com/refill12338/group1---ap/blob/master/How_To_
 (Edge) Add full function to action 3 "Handle_Change_Config"
 
 (Edge) Add full function to action 7 "Download Config"
+
+2018/11/27 10:27(UTC +8)
+
+(Edge) Massive add and fix JSON handle
+
+(Edge) Fix action 3's inproper file manipulation
+
+(Edge) test some function in AP and everything works find (probably)
+
+(Edge) add some handle of controller's JSON response
+
+(Edge) add action 1's register AP, we can receivce gw_id and manipulate /etc/wifidog.conf to configure it
