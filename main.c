@@ -78,6 +78,7 @@ int main()
 	int send_fail;
 	fd_set read_fd;
 	int action;
+	int Controller_State = -1;
 
 	int Message_pop = 0;
 	while(1)
@@ -141,7 +142,7 @@ int main()
 			{
 				puts("");
 				printf("[main.c] Received JSON from server:\n%s\n", recv_buf);
-				Handle_Action(recv_buf, socket_fd);
+				Handle_Action(recv_buf, socket_fd, &Controller_State);
 			}
 			else
 			{

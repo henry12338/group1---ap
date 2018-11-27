@@ -7,21 +7,25 @@
 #include <string.h>
 #include <sys/socket.h>
 
-int Handle_Action(const char * InputBuf, int socket_fd)
+int Handle_Action(const char * InputBuf, int socket_fd, int * State)
 {
 	double action = mjson_find_number(InputBuf, strlen(InputBuf), "$.Action", -1);
 	printf("Action is %d\n", (int)action);
-	if(action == 2)
+	if(action == 0)
+	{
+		return Handle_Controller_Alive(InputBuf, State);
+	}
+	else if(action == 1)
+	{
+		return Handle_Register_AP(InputBuf);
+	}
+	else if(action == 2)
 	{
 		return Handle_Return_AP_Info(InputBuf, socket_fd);
 	}
 	else if(action == 3)
 	{
 		return Handle_Change_Config(InputBuf, socket_fd);
-	}
-	else if(action == 6)
-	{
-		return Handle_Send_User_Info(InputBuf, socket_fd);
 	}
 	else if(action == 7)
 	{
@@ -30,6 +34,96 @@ int Handle_Action(const char * InputBuf, int socket_fd)
 	else
 	{
 		return -1;
+	}
+}
+//KMP
+void ConstructFailFunc(const char * needle, int * Fail, int len)
+{
+	Fail[0] = 0;
+	for(int q = 1,k = 0;q < len;q++)
+	{
+		while(k > 0 && needle[q] != needle[k])
+		{
+			k = Fail[k-1];
+		}
+		// ensure the needle privious one is the same as needle match one is equal
+		if(needle[q] == needle[k])
+		{
+			k++;
+		}
+		Fail[q] = k;
+	}
+}
+int MatchFunc(const char * Origin, const char * needle)
+{
+	int Fail[200];
+	int len = strlen(Origin);
+	int len_n = strlen(needle);
+	ConstructFailFunc(needle, Fail, len_n);
+	for(int q = 0,k = 0;q < len;q++)
+	{
+		while(k > 0 && Origin[q] != needle[k])
+		{
+			k = Fail[k-1];
+		}
+		// ensure the needle privious one is the same as needle match one is equal
+		if(Origin[q] == '#')
+		{
+			return -1;
+		}
+		if(Origin[q] == needle[k])
+		{
+			k++;
+		}
+		if(k == len_n)
+		{
+			return q;
+		}
+	}
+	return -1;
+}
+int Handle_Controller_Alive(const char * InputBuf, int * State)
+{
+	double buf = mjson_find_number(InputBuf, strlen(InputBuf), "$.State", -1);
+	*State = (int)buf;
+	return 1;
+}
+int Handle_Register_AP(const char * InputBuf)
+{
+	char gw_id[200];
+	mjson_find_string(InputBuf, strlen(InputBuf), "$.Gateway_ID", gw_id, sizeof(gw_id));
+	FILE * fp_read = fopen("/etc/wifidog.conf", "r");
+	FILE * fp_write = fopen("/etc/wifidog.conf_tmp", "a+");
+	int success = 0;
+	if(fp_read && fp_write)
+	{
+		char FileBuf[200];
+		while(fgets(FileBuf, sizeof(FileBuf), fp_read))
+		{
+			if(MatchFunc(FileBuf, "GatewayID") != -1)
+			{
+				fprintf(fp_write, "GatewayID %s\n", gw_id);
+				success = 1;
+				continue;
+			}
+			else
+			{
+				fprintf(fp_write, "%s", FileBuf);
+			}
+		}
+		if(!success)
+		{
+			fprintf(fp_write, "GatewayID %s\n", gw_id);
+		}
+		fclose(fp_read);
+		fclose(fp_write);
+		remove("/etc/wifidog.conf");
+		rename("/etc/wifidog.conf_tmp", "/etc/wifidog.conf");
+		return 1;
+	}
+	else
+	{
+		return 0;
 	}
 }
 int Handle_Return_AP_Info(const char * InputBuf, int socket_fd)
@@ -64,53 +158,11 @@ int Handle_Return_AP_Info(const char * InputBuf, int socket_fd)
 	printf("AP Received Traffic is %u(KiB)\n", AP_Traffic_Received/KiB);
 	printf("AP Transmit Traffic is %u(KiB)\n", AP_Traffic_Transmit/KiB);
 	printf("AP Usage Percent is %.2f\n", AP_Usage_Percent);
-//	printf("Gateway Identity is %d\n", AP_Gateway_ID);
 
 	char OutputBuf[1000];
         snprintf(OutputBuf, sizeof(OutputBuf), "{\n  \"Action\" : 2,\n  \"AP CPU Usage Percent\" : %.2f,\n  \"Network Received Traffic(KiB)\" : %u,\n  \"Network Transmit Traffic(KiB)\" : %u\n}\n", AP_Usage_Percent, AP_Traffic_Received/KiB, AP_Traffic_Transmit/KiB);
+
 	return send(socket_fd, OutputBuf, strlen(OutputBuf)+1, 0);
-}
-//KMP
-void ConstructFailFunc(char * needle, int * Fail, int len)
-{
-	Fail[0] = 0;
-	for(int q = 1,k = 0;q < len;q++)
-	{
-		while(k > 0 && needle[q] != needle[k])
-		{
-			k = Fail[k-1];
-		}
-		// ensure the needle privious one is the same as needle match one is equal
-		if(needle[q] == needle[k])
-		{
-			k++;
-		}
-		Fail[q] = k;
-	}
-}
-int MatchFunc(char * Origin, char * needle)
-{
-	int Fail[200];
-	int len = strlen(Origin);
-	int len_n = strlen(needle);
-	ConstructFailFunc(needle, Fail, len_n);
-	for(int q = 0,k = 0;q < len;q++)
-	{
-		while(k > 0 && Origin[q] != needle[k])
-		{
-			k = Fail[k-1];
-		}
-		// ensure the needle privious one is the same as needle match one is equal
-		if(Origin[q] == needle[k])
-		{
-			k++;
-		}
-		if(k == len_n)
-		{
-			return q;
-		}
-	}
-	return -1;
 }
 int Handle_Change_Config(const char * InputBuf, int socket_fd)
 {
@@ -119,10 +171,8 @@ int Handle_Change_Config(const char * InputBuf, int socket_fd)
 	char OutputBuf[1000];
         snprintf(OutputBuf, sizeof(OutputBuf), "{\n	\"Action\" : 3");
 
-// working ... don't use
-
 	char Query_Config[100];
-	char FileLoc[100];
+	char FileLoc[100], FileLoc_write[100];
 	char ConfigCategory[100];
 	char ConfigKeyword[100];
 	char ConfigValue[100];
@@ -148,12 +198,20 @@ int Handle_Change_Config(const char * InputBuf, int socket_fd)
 		Find_Category = Find_Keyword = 0;
 
 		FILE * fp_read = fopen(FileLoc, "r");
-		FILE * fp_write = fopen(FileLoc, "r+");
+		if(fp_read == NULL)
+		{
+			fp_read = fopen(FileLoc, "a+");
+			fclose(fp_read);
+			fp_read = fopen(FileLoc, "r");
+		}
+		snprintf(FileLoc_write, sizeof(FileLoc_write), "%s_tmp", FileLoc);
+		FILE * fp_write = fopen(FileLoc_write, "a+");
 		if(fp_read && fp_write)
 		{
 			char FileBuf[200];
 			while(fgets(FileBuf, sizeof(FileBuf), fp_read))
 			{
+				printf("1: %s\n", FileBuf);
 				fprintf(fp_write, "%s", FileBuf);
 				if(MatchFunc(FileBuf, ConfigCategory) != -1)
 				{
@@ -162,14 +220,18 @@ int Handle_Change_Config(const char * InputBuf, int socket_fd)
 					{
 						if(MatchFunc(FileBuf, "config") != -1 && !Find_Keyword)
 						{
+							printf("2: %s %s %s\n", FileBuf, ConfigKeyword, ConfigValue);
+
 							fprintf(fp_write, "	%s %s\n", ConfigKeyword, ConfigValue);
 							fprintf(fp_write, "%s", FileBuf);
 							success = 1;
 							continue;
 						}
-						if(MatchFunc(FileBuf, ConfigKeyword) != -1)
+						if(MatchFunc(FileBuf, ConfigKeyword) != -1 && !Find_Keyword)
 						{
 							Find_Keyword = 1;
+							printf("3: %s %s %s\n", ConfigCategory, ConfigKeyword, ConfigValue);
+
 							fprintf(fp_write, "	%s %s\n", ConfigKeyword, ConfigValue);
 							success = 1;
 							continue;
@@ -178,22 +240,31 @@ int Handle_Change_Config(const char * InputBuf, int socket_fd)
 					}
 					if(!Find_Keyword)
 					{
+						printf("4: %s %s\n", ConfigKeyword, ConfigValue);
 						fprintf(fp_write, "	%s %s\n", ConfigKeyword, ConfigValue);
 					}
 				}
 			}
 			if(!Find_Category)
 			{
+				printf("5: %s %s %s\n", ConfigCategory, ConfigKeyword, ConfigValue);
 				fprintf(fp_write, "%s\n", ConfigCategory);
 				fprintf(fp_write, "	%s %s\n", ConfigKeyword, ConfigValue);
 			}
+
+			fclose(fp_read);
+			fclose(fp_write);
+			remove(FileLoc);
+			rename(FileLoc_write, FileLoc);
+		}
+		else
+		{
+			printf("[JSON_request_handle.c] %s open error\n", FileLoc);
 		}
 		char ConCat[1000];
 		snprintf(ConCat, sizeof(ConCat), "%s,\n	\"Config_%d\" : %d", OutputBuf, counter, success);
 		strncpy(OutputBuf, ConCat, sizeof(OutputBuf));
-
-		fclose(fp_read);
-		fclose(fp_write);
+		
 
 		counter++;
 		snprintf(Query_Config, sizeof(Query_Config), "$.Config_%d", counter);
@@ -203,17 +274,6 @@ int Handle_Change_Config(const char * InputBuf, int socket_fd)
 	snprintf(ConCat, sizeof(ConCat), "%s\n}\n", OutputBuf, counter, success);
 	strncpy(OutputBuf, ConCat, sizeof(OutputBuf));
 	printf("%s", OutputBuf);
-	return send(socket_fd, OutputBuf, strlen(OutputBuf)+1, 0);
-}
-
-int Handle_Send_User_Info(const char * InputBuf, int socket_fd)
-{
-	char User_External_IP[20], Username[100];
-	printf("User's External IP is %s\n", User_External_IP);
-	printf("Username is %s\n", Username);
-
-	char OutputBuf[1000];
-        snprintf(OutputBuf, sizeof(OutputBuf), "{\n  \"Action\" : 6,\n  \"User Out IP\" : %s,\n  \"Username\" : %s\n}\n", User_External_IP, Username);
 	return send(socket_fd, OutputBuf, strlen(OutputBuf)+1, 0);
 }
 int Handle_Download_Config(const char * InputBuf, int socket_fd)
