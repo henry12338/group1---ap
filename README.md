@@ -63,3 +63,10 @@ Read [how_to_git](https://github.com/refill12338/group1---ap/blob/master/How_To_
 (Edge) add some handle of controller's JSON response
 
 (Edge) add action 1's register AP, we can receivce gw_id and manipulate /etc/wifidog.conf to configure it
+
+2018/11/28 01:31(UTC +8)
+
+(OwO) add check different file function
+
+(Edge) intergrate check different file function into Request_Update_Config()
+

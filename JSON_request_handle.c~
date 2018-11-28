@@ -176,6 +176,8 @@ int Handle_Change_Config(const char * InputBuf, int socket_fd)
 	char ConfigCategory[100];
 	char ConfigKeyword[100];
 	char ConfigValue[100];
+	char description[200];
+	char bef[200];
 	int ConfigAppend;
 	const char * Buf;
 	int len;
@@ -211,7 +213,6 @@ int Handle_Change_Config(const char * InputBuf, int socket_fd)
 			char FileBuf[200];
 			while(fgets(FileBuf, sizeof(FileBuf), fp_read))
 			{
-				printf("1: %s\n", FileBuf);
 				fprintf(fp_write, "%s", FileBuf);
 				if(MatchFunc(FileBuf, ConfigCategory) != -1)
 				{
@@ -276,6 +277,7 @@ int Handle_Change_Config(const char * InputBuf, int socket_fd)
 	printf("%s", OutputBuf);
 	return send(socket_fd, OutputBuf, strlen(OutputBuf)+1, 0);
 }
+
 int Handle_Download_Config(const char * InputBuf, int socket_fd)
 {
 	char FileName[50];

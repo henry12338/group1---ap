@@ -118,6 +118,26 @@ int main()
 						printf("%s", send_buf_buf);
 					}
 				}
+				else if(action == 1)
+				{
+					if(Request_Register_AP(send_buf, 1000) == 1)
+					{
+						sprintf(send_buf_buf, "%s", send_buf);
+						printf("[main.c] Send Action 1 to server:\n");				
+						printf("%s", send_buf_buf);
+					}
+				}
+				else if(action == 6)
+				{
+					char content[1000];
+					scanf("%s", content);
+					if(Request_Upload_Config(content, send_buf, 1000) == 1)
+					{
+						sprintf(send_buf_buf, "%s", send_buf);
+						printf("[main.c] Send Action 6 to server:\n");				
+						printf("%s", send_buf_buf);
+					}
+				}
 				else
 				{
 					printf("[main.c] Invalid action\n");

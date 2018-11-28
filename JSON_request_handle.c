@@ -211,7 +211,6 @@ int Handle_Change_Config(const char * InputBuf, int socket_fd)
 			char FileBuf[200];
 			while(fgets(FileBuf, sizeof(FileBuf), fp_read))
 			{
-				printf("1: %s\n", FileBuf);
 				fprintf(fp_write, "%s", FileBuf);
 				if(MatchFunc(FileBuf, ConfigCategory) != -1)
 				{
