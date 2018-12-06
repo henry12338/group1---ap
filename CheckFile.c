@@ -37,7 +37,7 @@ int getAllFiles(char *_path) {
 			}
 
 			//set subdirentory path
-			sprintf(_subdirentory_path, "%s/%s", _path, _dirp->d_name);
+			snprintf(_subdirentory_path, sizeof(_subdirentory_path), "%s/%s", _path, _dirp->d_name);
 
 			//recur subdirentory
 			getAllFiles(_subdirentory_path);
@@ -128,8 +128,8 @@ int getDifferentFiles(char *_original_path, char *_change_path) {
 			}
 
 			//set subdirentory path
-			sprintf(_original_subdirentory_path, "%s/%s", _original_path, _dirp->d_name);
-			sprintf(_change_subdirentory_path, "%s/%s", _change_path, _dirp->d_name);
+			snprintf(_original_subdirentory_path, sizeof(_original_subdirentory_path), "%s/%s", _original_path, _dirp->d_name);
+			sprintf(_change_subdirentory_path, sizeof(_change_subdirentory_path), "%s/%s", _change_path, _dirp->d_name);
 
 			//recur subdirentory
 			getDifferentFiles(_original_subdirentory_path, _change_subdirentory_path);
@@ -155,7 +155,7 @@ int getDifferentFiles(char *_original_path, char *_change_path) {
 			}
 
 			//set file path
-			sprintf(_original_file_path, "%s/%s", _original_path, _dirp->d_name);
+			snprintf(_original_file_path, sizeof(_original_file_path), "%s/%s", _original_path, _dirp->d_name);
 
 			//open file in original path
 			FILE *_original_file = fopen(_original_file_path, "r");
@@ -186,8 +186,8 @@ int getDifferentFiles(char *_original_path, char *_change_path) {
 				}
 
 				//set file command
-				sprintf(_original_file_command, "md5sum %s/%s", _original_path, _dirp->d_name);
-				sprintf(_change_file_command, "md5sum %s/%s", _change_path, _dirp->d_name);
+				sprintf(_original_file_command, sizeof(_original_file_command), "md5sum %s/%s", _original_path, _dirp->d_name);
+				sprintf(_change_file_command, sizeof(_change_file_command), "md5sum %s/%s", _change_path, _dirp->d_name);
 
 				//get md5hash
 				FILE *_original_file_exec = popen(_original_file_command, "r");

@@ -31,11 +31,13 @@ Read [how_to_git](https://github.com/refill12338/group1---ap/blob/master/How_To_
 2018/11/1 12:56(UTC +8)
 
 (Edge)Add some handle function to the request from controller in JSON.
+
 +JSON_request_handle.c JSON_request_handle.h
 
 2018/11/20 11:29(UTC +8)
 
 (Henry) Update sprintf to snprintf to increase safety
+
 (Edge) Modify some JSON_request_handle JSON_action to fit [JSON](https://hackmd.io/H2n8ktZCSh6mbbKU3Sw-fg?both)'s need
 
 2018/11/23 11:38(UTC +8)
@@ -69,3 +71,8 @@ Read [how_to_git](https://github.com/refill12338/group1---ap/blob/master/How_To_
 (OwO) add check different file function
 
 (Edge) intergrate check different file function into Request_Update_Config()
+
+2018/12/6 10:48(UTC +8)
+
+(Edge)
+

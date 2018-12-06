@@ -9,6 +9,7 @@
 		uint32_t UIntData;
 	}ConfigQuery;
 
+	int Save_Config_Character(const char * FileName, const char * Key, char Value);
 	ConfigQuery Load_Config_Character(const char * FileName, const char * Key);
 	ConfigQuery Load_Config_String(const char * FileName, const char * Key, char * Output, int OutputLength);
 	ConfigQuery Load_Config_IntData(const char * FileName, const char * Key);

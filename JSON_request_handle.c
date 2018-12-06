@@ -1,4 +1,5 @@
 #include "JSON_request_handle.h"
+#include "config.h"
 #include "mjson.h"
 #include "config.h"
 #include "update.h"
@@ -119,10 +120,17 @@ int Handle_Register_AP(const char * InputBuf)
 		fclose(fp_write);
 		remove("/etc/wifidog.conf");
 		rename("/etc/wifidog.conf_tmp", "/etc/wifidog.conf");
+		if(Save_Config_Character("./config/connect_config", "AP_Registered", '1') == 0)
+		{
+			printf("[JSON_request_handle.c] Register AP failed, save registered state to config failed\n");
+			return 0;
+		}
+		printf("[JSON_request_handle.c] Register AP successed\n");
 		return 1;
 	}
 	else
 	{
+		printf("[JSON_request_handle.c] Register AP failed, can't open /etc/wifidog.conf\n");
 		return 0;
 	}
 }
@@ -231,6 +239,11 @@ int Handle_Change_Config(const char * InputBuf, int socket_fd)
 							Find_Keyword = 1;
 							printf("3: %s %s %s\n", ConfigCategory, ConfigKeyword, ConfigValue);
 
+							if(!ConfigValue[0])
+							{
+								success = 1;
+								continue;
+							}
 							fprintf(fp_write, "	%s %s\n", ConfigKeyword, ConfigValue);
 							success = 1;
 							continue;
@@ -273,6 +286,7 @@ int Handle_Change_Config(const char * InputBuf, int socket_fd)
 	snprintf(ConCat, sizeof(ConCat), "%s\n}\n", OutputBuf, counter, success);
 	strncpy(OutputBuf, ConCat, sizeof(OutputBuf));
 	printf("%s", OutputBuf);
+	system("wifi");
 	return send(socket_fd, OutputBuf, strlen(OutputBuf)+1, 0);
 }
 

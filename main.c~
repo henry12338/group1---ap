@@ -57,120 +57,155 @@ int main()
 	serveraddr.sin_addr.s_addr = inet_addr(ip_address);
 	serveraddr.sin_port = htons(port);
 
-	int socket_fd = socket(AF_INET, SOCK_STREAM, 0);
-	if(socket_fd == -1)
-	{
-		puts("[main.c] Socket Creation Failure");
-		return -1;
-	}
-	int connect_fail = connect(socket_fd, (struct sockaddr *) &serveraddr, sizeof(serveraddr));
-	if(connect_fail == -1)
-	{
-		printf("[main.c] Connect to %s fail\n", ip_address);
-		return -2;
-	}
-	printf("[main.c] Connected to %s\n", ip_address);
-
-	char send_buf[1000];
-	char send_buf_buf[1000];
-	char command[1000];
-	char recv_buf[1000];
-	int send_fail;
-	fd_set read_fd;
-	int action;
-	int Controller_State = -1;
-
-	int Message_pop = 0;
 	while(1)
 	{
-		if(!Message_pop)
+		int socket_fd = socket(AF_INET, SOCK_STREAM, 0);
+		if(socket_fd == -1)
 		{
-			printf("Enter Command (h for help)...>");
+			puts("[main.c] Socket Creation Failure");
+			return -1;
+		}
+		int connect_fail = connect(socket_fd, (struct sockaddr *) &serveraddr, sizeof(serveraddr));
+		while(connect_fail == -1)
+		{
+			sleep(2);			
+			connect_fail = connect(socket_fd, (struct sockaddr *) &serveraddr, sizeof(serveraddr));
+			printf("[main.c] Trying to connect to %s...\n", ip_address);
 			fflush(stdout);
 		}
-		Message_pop = 1;
+		printf("[main.c] Connected to %s\n", ip_address);
 
-		struct timeval tv;
-		tv.tv_sec = 2;
-		tv.tv_usec = 0;
-		FD_ZERO(&read_fd);		
-		FD_SET(socket_fd, &read_fd);
-		FD_SET(STDIN_FILENO, &read_fd);
-		if(select(socket_fd+1, &read_fd, NULL, NULL, &tv) <= 0)
+
+		char send_buf[1000];
+		char send_buf_buf[1000];
+
+		char command[1000];
+		char recv_buf[1000];
+		int send_fail;
+		fd_set read_fd;
+		int action;
+		int Controller_State = -1;
+
+		int Message_pop = 0;
+
+
+		ConfigBuf = Load_Config_Character("./config/connect_config", "AP_Registered");
+
+		if(ConfigBuf.DataType == -1)
 		{
+			printf("[main.c] Can't know whether this AP is registered, please check config.\n");
+			return -11;
 		}
-		if(FD_ISSET(STDIN_FILENO, &read_fd))
+		if(ConfigBuf.CharacterData == '0')
 		{
-			scanf("%s", command);
-			if(strncmp(command, "h", strlen("h")) == 0)
+			printf("[main.c] Trying to register AP\n");
+			if(Request_Register_AP(send_buf, 1000) == 1)
 			{
-				Helper();
+				sprintf(send_buf_buf, "%s", send_buf);
+				printf("[main.c] Send Action 1 to server:\n");				
+				printf("%s", send_buf_buf);
 			}
-			else if(strncmp(command, "send", strlen("send")) == 0)
+			send_fail = send(socket_fd, send_buf_buf, strlen(send_buf_buf)+1, 0);
+			if(send_fail < 0)
 			{
-				scanf("%d", &action);
-				if(action == 0)
+				printf("[main.c] Send JSON Failed\n");
+			}
+		}
+		else
+		{
+			
+		}
+		while(1)
+		{
+			if(!Message_pop)
+			{
+				printf("Enter Command (h for help)...>");
+				fflush(stdout);
+			}
+			Message_pop = 1;
+
+			struct timeval tv;
+			tv.tv_sec = 2;
+			tv.tv_usec = 0;
+			FD_ZERO(&read_fd);		
+			FD_SET(socket_fd, &read_fd);
+			FD_SET(STDIN_FILENO, &read_fd);
+			if(select(socket_fd+1, &read_fd, NULL, NULL, &tv) <= 0)
+			{
+			}
+			if(FD_ISSET(STDIN_FILENO, &read_fd))
+			{
+				scanf("%s", command);
+				if(strncmp(command, "h", strlen("h")) == 0)
 				{
-					if(Request_Controller_Alive(send_buf, 1000) == 1)
-					{
-						sprintf(send_buf_buf, "%s", send_buf);
-						printf("[main.c] Send Action 0 to server:\n");				
-						printf("%s", send_buf_buf);
-					}
+					Helper();
 				}
-				else if(action == 1)
+				else if(strncmp(command, "send", strlen("send")) == 0)
 				{
-					if(Request_Register_AP(send_buf, 1000) == 1)
+					scanf("%d", &action);
+					if(action == 0)
 					{
-						sprintf(send_buf_buf, "%s", send_buf);
-						printf("[main.c] Send Action 1 to server:\n");				
-						printf("%s", send_buf_buf);
+						if(Request_Controller_Alive(send_buf, 1000) == 1)
+						{
+							sprintf(send_buf_buf, "%s", send_buf);
+							printf("[main.c] Send Action 0 to server:\n");				
+							printf("%s", send_buf_buf);
+						}
 					}
-				}
-				else if(action == 6)
-				{
-					char content[1000];
-					scanf("%s", content);
-					if(Request_Upload_Config(content, send_buf, 1000) == 1)
+					else if(action == 1)
 					{
-						sprintf(send_buf_buf, "%s", send_buf);
-						printf("[main.c] Send Action 1 to server:\n");				
-						printf("%s", send_buf_buf);
+						if(Request_Register_AP(send_buf, 1000) == 1)
+						{
+							sprintf(send_buf_buf, "%s", send_buf);
+							printf("[main.c] Send Action 1 to server:\n");				
+							printf("%s", send_buf_buf);
+						}
+					}
+					else if(action == 6)
+					{
+						char content[1000];
+						scanf("%s", content);
+						if(Request_Upload_Config(content, send_buf, 1000) == 1)
+						{
+							sprintf(send_buf_buf, "%s", send_buf);
+							printf("[main.c] Send Action 6 to server:\n");				
+							printf("%s", send_buf_buf);
+						}
+					}
+					else
+					{
+						printf("[main.c] Invalid action\n");
+					}
+					send_fail = send(socket_fd, send_buf_buf, strlen(send_buf_buf)+1, 0);
+					if(send_fail < 0)
+					{
+						printf("[main.c] Send JSON Failed\n");
+						break;
 					}
 				}
 				else
 				{
-					printf("[main.c] Invalid action\n");
+					printf("[main.c] Invalid command\n");
 				}
-				send_fail = send(socket_fd, send_buf_buf, strlen(send_buf_buf)+1, 0);
-				if(send_fail < 0)
+				Message_pop = 0;
+			}
+			if(FD_ISSET(socket_fd, &read_fd))
+			{
+				if(recv(socket_fd, recv_buf, 1000, 0) > 0)
 				{
-					printf("[main.c] Send JSON Failed\n");
+					puts("");
+					printf("[main.c] Received JSON from server:\n%s\n", recv_buf);
+					Handle_Action(recv_buf, socket_fd, &Controller_State);
+				}
+				else
+				{
+					printf("\n[main.c] Server Disconnect\n");
 					break;
 				}
+				Message_pop = 0;
+			}
+		}
+		close(socket_fd);
 
-			}
-			else
-			{
-				printf("[main.c] Invalid command\n");
-			}
-			Message_pop = 0;
-		}
-		if(FD_ISSET(socket_fd, &read_fd))
-		{
-			if(recv(socket_fd, recv_buf, 1000, 0) > 0)
-			{
-				puts("");
-				printf("[main.c] Received JSON from server:\n%s\n", recv_buf);
-				Handle_Action(recv_buf, socket_fd, &Controller_State);
-			}
-			else
-			{
-				printf("\n[main.c] Server Disconnect\n");
-				break;
-			}
-			Message_pop = 0;
-		}
 	}
-	close(socket_fd);
 }

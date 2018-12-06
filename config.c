@@ -2,6 +2,45 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+int Save_Config_Character(const char * FileName, const char * Key, char Value)
+{
+	char FileName_Tmp[500];
+	snprintf(FileName_Tmp, sizeof(FileName_Tmp), "%s_tmp", FileName);
+	FILE * fp_read = fopen(FileName, "r");
+	FILE * fp_write = fopen(FileName_Tmp, "w");
+	if(!fp_read || !fp_write)
+	{
+		return 0;
+	}
+	//seek Key and change value
+	char Line[500];
+	char LineKey[500], LineValue[500];
+	int gotcha = 0;
+	while(fgets(Line, sizeof(Line), fp_read))
+	{
+		if(gotcha)
+		{
+			fprintf(fp_write, "%s", Line);
+		}
+		else
+		{
+			if(Line[strlen(Line)-1] == '\n')
+			{
+				Line[strlen(Line)-1] = 0;
+			}		
+			sscanf(Line, "%s = %c", LineKey, LineValue);
+			if(strcmp(Key, LineKey) == 0)
+			{
+				gotcha = 1;
+				fprintf(fp_write, "%s = %c\n", Key, Value);
+			}
+		}		
+	}
+	fclose(fp_read);
+	fclose(fp_write);
+	remove(FileName);
+	rename(FileName_Tmp, FileName);
+}
 ConfigQuery Load_Config_Character(const char * FileName, const char * Key)
 {
 	ConfigQuery buf;
@@ -30,6 +69,7 @@ ConfigQuery Load_Config_Character(const char * FileName, const char * Key)
 			break;
 		}
 	}
+	fclose(fp);
 	if(!gotcha)
 	{
 		buf.DataType = -1;
@@ -69,6 +109,7 @@ ConfigQuery Load_Config_String(const char * FileName, const char * Key, char * O
 			break;
 		}
 	}
+	fclose(fp);
 	if(!gotcha)
 	{
 		buf.DataType = -1;
@@ -108,6 +149,7 @@ ConfigQuery Load_Config_IntData(const char * FileName, const char * Key)
 			break;
 		}
 	}
+	fclose(fp);
 	if(!gotcha)
 	{
 		buf.DataType = -1;
@@ -147,6 +189,7 @@ ConfigQuery Load_Config_UIntData(const char * FileName, const char * Key)
 			break;
 		}
 	}
+	fclose(fp);
 	if(!gotcha)
 	{
 		buf.DataType = -1;
