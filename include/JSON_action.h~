@@ -29,7 +29,7 @@
 	/* AP Prompt Controller to download AP's changed setting
 		Param:
 	
-		ConfigFilename is AP's packed changed setting archive filename
+		Content is changed config information
 		OutputBuf is the string to save JSON content
 		length is OutputBuf's maximum length
 

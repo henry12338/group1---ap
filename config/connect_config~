@@ -1,8 +1,8 @@
 #DNS_Address = secontroller1st.ddns.net
 IP_Address = 35.221.194.17
 Port = 27015
-AP_Registered = 0
+AP_Registered = 1
 FTP_Server_Address = 35.221.194.17
 FTP_Username = uftp
 FTP_Password = seg1
-Config_Extract_Location = ./testdir/
+Update_Extract_Location = ./testdir/

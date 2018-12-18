@@ -1,0 +1,8 @@
+617b6e911aa4c559624452b62bba0e77 *OpenWrt-Toolchain-ramips-mt7628_gcc-4.8-linaro_uClibc-0.9.33.2.Linux-i686.tar.bz2
+556b1efddfbf6053d457b0a1e3143565 *openwrt-ramips-mt7628-LinkIt7688-squashfs-sysupgrade.bin
+3b89e8f412bf647dc3885b8446d5d178 *openwrt-ramips-mt7628-mt7628-squashfs-sysupgrade.bin
+423d62b007df8f23368871f8dc7e6e0c *openwrt-ramips-mt7628-root.squashfs
+be4cc2db85439a0b0ce648dce5f01d86 *openwrt-ramips-mt7628-uImage.bin
+dd4eae8590584da6a52f2f8f8f77c9fc *openwrt-ramips-mt7628-vmlinux.bin
+865efaa1317e963ab9c15baad461d1a6 *openwrt-ramips-mt7628-vmlinux.elf
+35b2c1c6d7731fae417800a38af3acea *sha256sums

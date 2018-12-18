@@ -6,6 +6,7 @@
 #include <errno.h>
 #include <unistd.h>
 #include "update.h"
+#include "utility.h"
 void UpdateAllPackage()
 {
 	system("opkg update; opkg upgrade;");
@@ -30,8 +31,10 @@ size_t Read_Callback(void * ptr, size_t size, size_t nmemb, void * stream)
 
 	return retcode;
 }
-void DownloadSettingPackage(const char * URL, const char * username, const char * password, const char * DownloadLoc)
+void DownloadFile(const char * URL, const char * username, const char * password, const char * DownloadLoc)
 {
+	char logText[500];
+
 	CURL *curl;
 	CURLcode res;
 	struct FTPFile ftpfile =
@@ -71,7 +74,8 @@ void DownloadSettingPackage(const char * URL, const char * username, const char 
 		if(CURLE_OK != res)
 		{
 			/* we failed */ 
-			fprintf(stderr, "curl told us %d\n", res);
+			snprintf(logText, sizeof(logText), "[update.c] Curl error message: %s", curl_easy_strerror(res));
+			RecordLog(logText);
 		}
 	}
 	 
@@ -81,8 +85,9 @@ void DownloadSettingPackage(const char * URL, const char * username, const char 
 	curl_global_cleanup();
 
 }
-void UploadSettingPackage(const char * UploadURL, const char * username, const char * password, const char * FileLoc)
+void UploadFile(const char * UploadURL, const char * username, const char * password, const char * FileLoc)
 {
+	char logText[500];
 	CURL * curl;
 	CURLcode res;
 	FILE * hd_src;
@@ -91,7 +96,8 @@ void UploadSettingPackage(const char * UploadURL, const char * username, const c
 	
 	if(stat(FileLoc, &file_info))
 	{
-		printf("Couldn't open '%s'\n", FileLoc);
+		snprintf(logText, sizeof(logText), "[update.c] Couldn't open %s", FileLoc);
+		RecordLog(logText);
 		return;
 	}
 
@@ -134,8 +140,10 @@ void UploadSettingPackage(const char * UploadURL, const char * username, const c
 		res = curl_easy_perform(curl);
 		/* Check for errors */ 
 		if(res != CURLE_OK)
-		fprintf(stderr, "curl_easy_perform() failed: %s\n",
-		      curl_easy_strerror(res));
+		{
+			snprintf(logText, sizeof(logText), "[update.c] Curl error message: %s", curl_easy_strerror(res));
+			RecordLog(logText);
+		}
 
 		/* always cleanup */ 
 		curl_easy_cleanup(curl);

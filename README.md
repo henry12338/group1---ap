@@ -86,3 +86,20 @@ Read [how_to_git](https://github.com/refill12338/group1---ap/blob/master/How_To_
 
 (Edge) small bug fix(fix whatever I don't remember..)
 
+2018/12/19 12:35(UTC +8)
+
+(Edge)(ignore) hope this is the last time i write this..
+
+(Edge) fix relative path problem, now every source file use current execute path to find any file
+
+(Edge) change config modify method to use uci
+
+(Edge) add log to record necessary message 
+
+(Edge) add action 6 to upload log to server
+
+(Edge) modify action 7 to download latest ap version
+
+(Edge) action 2 return ap info can return gateway id info now
+
+(Edge) write some script in ./install_ap to increase the speed of planting necessary AP file to target AP

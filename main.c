@@ -15,21 +15,29 @@
 #include "config.h"
 #include "update.h"
 #include "help.h"
-int main()
+#include "utility.h"
+int main(int argc, char ** argv)
 {
+	char logText[500];
 	char ip_address[100] = {};
 	char DNS_address[200] = {};
 	ConfigQuery ConfigBuf;
-	ConfigBuf = Load_Config_String("./config/connect_config", "IP_Address", ip_address, sizeof(ip_address));
+	char ConfigPath[200];
+	char CurrentPath[200];
+	getcwd(CurrentPath, sizeof(CurrentPath));
+	snprintf(ConfigPath, sizeof(ConfigPath), "%s/config/connect_config", CurrentPath);
+	ConfigBuf = Load_Config_String(ConfigPath, "IP_Address", ip_address, sizeof(ip_address));
 	if(ConfigBuf.DataType == -1)
 	{
-		ConfigBuf = Load_Config_String("./config/connect_config", "DNS_Address", DNS_address, sizeof(DNS_address));
+		ConfigBuf = Load_Config_String(ConfigPath, "DNS_Address", DNS_address, sizeof(DNS_address));
 		if(ConfigBuf.DataType == -1)
 		{
-			puts("[main.c] No proper config");
+			snprintf(logText, sizeof(logText), "[%s] No proper config", __FILE__);
+			RecordLog(logText);
 			return -3;
 		}
-		printf("[main.c] Load DNS: %s\n", DNS_address);
+		snprintf(logText, sizeof(logText), "[%s] Load DNS: %s", __FILE__, DNS_address);
+		RecordLog(logText);
 		struct hostent* HostInfo;
 
 		/* get IP address from name */
@@ -37,18 +45,21 @@ int main()
 
 		if(!HostInfo)
 		{
-		    printf("[main.c] Could not resolve host name\n");
-		    return -10;
+			snprintf(logText, sizeof(logText), "[%s] Could not resolve host name", __FILE__);
+			RecordLog(logText);
+			return -10;
 		}
 		sprintf(ip_address, "%hhu.%hhu.%hhu.%hhu", HostInfo->h_addr_list[0][0], HostInfo->h_addr_list[0][1], HostInfo->h_addr_list[0][2], HostInfo->h_addr_list[0][3]);
 	}
 	else
 	{
-		printf("[main.c] Load IP: %s\n", ip_address);
+		snprintf(logText, sizeof(logText), "[%s] Load IP: %s", __FILE__, ip_address);
+		RecordLog(logText);
 	}
-	ConfigBuf = Load_Config_IntData("./config/connect_config", "Port");
+	ConfigBuf = Load_Config_IntData(ConfigPath, "Port");
 	int port = ConfigBuf.IntData;
-	printf("[main.c] Load Port: %d\n", port);
+	snprintf(logText, sizeof(logText), "[%s] Load Port: %d", __FILE__, port);
+	RecordLog(logText);
 
 
 	struct sockaddr_in serveraddr;
@@ -62,7 +73,8 @@ int main()
 		int socket_fd = socket(AF_INET, SOCK_STREAM, 0);
 		if(socket_fd == -1)
 		{
-			puts("[main.c] Socket Creation Failure");
+			snprintf(logText, sizeof(logText), "[%s] Socket Creation Failure", __FILE__);
+			RecordLog(logText);
 			return -1;
 		}
 		int connect_fail = connect(socket_fd, (struct sockaddr *) &serveraddr, sizeof(serveraddr));
@@ -70,10 +82,12 @@ int main()
 		{
 			sleep(2);			
 			connect_fail = connect(socket_fd, (struct sockaddr *) &serveraddr, sizeof(serveraddr));
-			printf("[main.c] Trying to connect to %s...\n", ip_address);
+			snprintf(logText, sizeof(logText), "[%s] Trying to connect to %s...", __FILE__, ip_address);
+			RecordLog(logText);
 			fflush(stdout);
 		}
-		printf("[main.c] Connected to %s\n", ip_address);
+		snprintf(logText, sizeof(logText), "[%s] Connected to %s", __FILE__, ip_address);
+		RecordLog(logText);
 
 
 		char send_buf[1000];
@@ -89,31 +103,36 @@ int main()
 		int Message_pop = 0;
 
 
-		ConfigBuf = Load_Config_Character("./config/connect_config", "AP_Registered");
+		ConfigBuf = Load_Config_Character(ConfigPath, "AP_Registered");
 
 		if(ConfigBuf.DataType == -1)
 		{
-			printf("[main.c] Can't know whether this AP is registered, please check config.\n");
+			snprintf(logText, sizeof(logText), "[%s] Can't know whether this AP is registered, please check config.", __FILE__);
+			RecordLog(logText);
 			return -11;
 		}
 		if(ConfigBuf.CharacterData == '0')
 		{
-			printf("[main.c] Trying to register AP\n");
+			snprintf(logText, sizeof(logText), "[%s] Trying to register AP", __FILE__);
+			RecordLog(logText);
 			if(Request_Register_AP(send_buf, 1000) == 1)
 			{
 				sprintf(send_buf_buf, "%s", send_buf);
-				printf("[main.c] Send Action 1 to server:\n");				
+				snprintf(logText, sizeof(logText), "[%s] Send Action 1 to server.", __FILE__);
+				RecordLog(logText);
 				printf("%s", send_buf_buf);
 			}
 			send_fail = send(socket_fd, send_buf_buf, strlen(send_buf_buf)+1, 0);
 			if(send_fail < 0)
 			{
-				printf("[main.c] Send JSON Failed\n");
+				snprintf(logText, sizeof(logText), "[%s] Send JSON Failed.", __FILE__);
+				RecordLog(logText);
 			}
 		}
 		else
 		{
-			printf("[main.c] AP is registered\n");			
+			snprintf(logText, sizeof(logText), "[%s] AP is registered.", __FILE__);
+			RecordLog(logText);
 		}
 		while(1)
 		{
@@ -135,6 +154,7 @@ int main()
 			}
 			if(FD_ISSET(STDIN_FILENO, &read_fd))
 			{
+/*
 				scanf("%s", command);
 				if(strncmp(command, "h", strlen("h")) == 0)
 				{
@@ -147,59 +167,46 @@ int main()
 					{
 						if(Request_Controller_Alive(send_buf, 1000) == 1)
 						{
-							sprintf(send_buf_buf, "%s", send_buf);
-							printf("[main.c] Send Action 0 to server:\n");				
-							printf("%s", send_buf_buf);
-						}
-					}
-					else if(action == 1)
-					{
-						if(Request_Register_AP(send_buf, 1000) == 1)
-						{
-							sprintf(send_buf_buf, "%s", send_buf);
-							printf("[main.c] Send Action 1 to server:\n");				
-							printf("%s", send_buf_buf);
-						}
-					}
-					else if(action == 6)
-					{
-						char content[1000];
-						scanf("%s", content);
-						if(Request_Upload_Config(content, send_buf, 1000) == 1)
-						{
-							sprintf(send_buf_buf, "%s", send_buf);
-							printf("[main.c] Send Action 6 to server:\n");				
-							printf("%s", send_buf_buf);
+							snprintf(send_buf_buf, sizeof(send_buf_buf), "%s", send_buf);
+							snprintf(logText, sizeof(logText), "[%s] Send Action 0 to server.", __FILE__);
+							RecordLog(logText);
 						}
 					}
 					else
 					{
-						printf("[main.c] Invalid action\n");
+						snprintf(logText, sizeof(logText), "[%s] Invalid action.", __FILE__);
+						RecordLog(logText);
 					}
 					send_fail = send(socket_fd, send_buf_buf, strlen(send_buf_buf)+1, 0);
 					if(send_fail < 0)
 					{
-						printf("[main.c] Send JSON Failed\n");
+						snprintf(logText, sizeof(logText), "[%s] Send JSON Failed.", __FILE__);
+						RecordLog(logText);
 						break;
 					}
 				}
 				else
 				{
-					printf("[main.c] Invalid command\n");
+					snprintf(logText, sizeof(logText), "[%s] Invalid command.", __FILE__);
+					RecordLog(logText);
 				}
 				Message_pop = 0;
+*/
 			}
 			if(FD_ISSET(socket_fd, &read_fd))
 			{
 				if(recv(socket_fd, recv_buf, 1000, 0) > 0)
 				{
 					puts("");
-					printf("[main.c] Received JSON from server:\n%s\n", recv_buf);
+					snprintf(logText, sizeof(logText), "[%s] Received JSON from server:\n%s", __FILE__, recv_buf);
+					RecordLog(logText);
 					Handle_Action(recv_buf, socket_fd, &Controller_State);
 				}
 				else
 				{
-					printf("\n[main.c] Server Disconnect\n");
+					puts("");
+					snprintf(logText, sizeof(logText), "[%s] Server Disconnect", __FILE__);
+					RecordLog(logText);
 					break;
 				}
 				Message_pop = 0;

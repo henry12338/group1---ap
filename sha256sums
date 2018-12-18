@@ -1,0 +1,8 @@
+SHA256(OpenWrt-Toolchain-ramips-mt7628_gcc-4.8-linaro_uClibc-0.9.33.2.Linux-i686.tar.bz2)= 21177d0ad618b1ae5f3c9a5dfa08ce7397c02af8f1a44dbaffb6bcb72a3916c9
+SHA256(openwrt-ramips-mt7628-LinkIt7688-squashfs-sysupgrade.bin)= b8aa6f6a8fe4c5eada0c9d343051bc5fe3970d9f9a76c9c26cfcf1c282fc77c8
+SHA256(openwrt-ramips-mt7628-mt7628-squashfs-sysupgrade.bin)= fa1b9873b7b95050c5bc982e0af49956865bf7f78f2631cec762cfbbde2774a1
+SHA256(openwrt-ramips-mt7628-root.squashfs)= 001b2d33dbad72b95a12c20b406d989aacbf228e25d4640e8117cf791edf9359
+SHA256(openwrt-ramips-mt7628-uImage.bin)= 39cc9d1d3fcc7eab9ed6604cee9e34980a476fe5996dcdd4f39c6d730efb6168
+SHA256(openwrt-ramips-mt7628-vmlinux.bin)= 8f5deae61feace1f367f9d6b05eb9fd903ca6cef2a08f761f024738c6f5769b3
+SHA256(openwrt-ramips-mt7628-vmlinux.elf)= 34954f04567f70e18af564439dcdaa7fff2dc58eab60f3c0a0ec528a157b1201
+SHA256(sha256sums)= e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855

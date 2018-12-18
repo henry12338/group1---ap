@@ -1,0 +1,9 @@
+#!/bin/sh /etc/rc.common
+
+START=999
+USE_PROCD=1
+start_service() {
+    echo start_service1
+    /bin/sh /root/autorestart.sh
+    echo start_service2
+}
