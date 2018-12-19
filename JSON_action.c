@@ -19,4 +19,8 @@ int Request_Register_AP(char * OutputBuf, int length)
 	int ret_value = snprintf(OutputBuf, length, "{\n  \"Action\" : 1\n}\n");
 	return ret_value>=0&&ret_value<length;
 }
-
+int Request_Connect_To_Controller(char * OutputBuf, int length)
+{
+	int ret_value = snprintf(OutputBuf, length, "{\n  \"Action\" : 4,\n	\"Gateway_ID\" : %d\n}\n", GetGatewayID());
+	return ret_value>=0&&ret_value<length;
+}

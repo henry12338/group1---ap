@@ -102,4 +102,8 @@ Read [how_to_git](https://github.com/refill12338/group1---ap/blob/master/How_To_
 
 (Edge) action 2 return ap info can return gateway id info now
 
-(Edge) write some script  to increase the speed of plant necessary AP file to target AP
+(Edge) write some script in ./install_ap to increase the speed of planting necessary AP file to target AP
+
+2018/12/19 10:28(UTC +8)
+
+(Edge) add action 4

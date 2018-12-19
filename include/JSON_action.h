@@ -26,6 +26,18 @@
 	*/
 	int Request_Register_AP(char * OutputBuf, int length);
 
+	/* AP inform Controller its gatewayID
+		Param:
+	
+		OutputBuf is the string to save JSON content
+		length is OutputBuf's maximum length
+
+		Return value:
+		0 if the OutputBuf cannot contain large data
+		1 if success
+	*/
+	int Request_Connect_To_Controller(char * OutputBuf, int length);
+
 	//---------Response------------
 	//Response will let JSON_request_handle.c to handle
 #endif

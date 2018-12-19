@@ -134,6 +134,19 @@ int main(int argc, char ** argv)
 			snprintf(logText, sizeof(logText), "[%s] AP is registered.", __FILE__);
 			RecordLog(logText);
 		}
+		if(Request_Connect_To_Controller(send_buf, 1000) == 1)
+		{
+			sprintf(send_buf_buf, "%s", send_buf);
+			snprintf(logText, sizeof(logText), "[%s] Send Action 4 to server.", __FILE__);
+			RecordLog(logText);
+			printf("%s", send_buf_buf);
+		}
+		send_fail = send(socket_fd, send_buf_buf, strlen(send_buf_buf)+1, 0);
+		if(send_fail < 0)
+		{
+			snprintf(logText, sizeof(logText), "[%s] Send JSON Failed.", __FILE__);
+			RecordLog(logText);
+		}
 		while(1)
 		{
 			if(!Message_pop)
