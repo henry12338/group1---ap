@@ -107,3 +107,5 @@ Read [how_to_git](https://github.com/refill12338/group1---ap/blob/master/How_To_
 2018/12/19 10:28(UTC +8)
 
 (Edge) add action 4 to inform controller ap's gateway id
+
+(Edge) modify upload_and_setup.sh to enable APClient script in target AP

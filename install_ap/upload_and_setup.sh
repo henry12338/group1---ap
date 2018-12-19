@@ -35,7 +35,8 @@ echo "updated AP program, now run AP program"
 sshpass -p 'root' scp ./APClient root@192.168.1.251:/etc/init.d
 sshpass -p 'root' scp ./autorestart.sh root@192.168.1.251:/root
 sshpass -p 'root' ssh -p 22 root@192.168.1.251 "chmod +x /etc/init.d/APClient;chmod +x /root/autorestart.sh"
-sshpass -p 'root' ssh -p 22 root@192.168.1.251 './ap_client'
+sshpass -p 'root' ssh -p 22 root@192.168.1.251 '/etc/init.d/APClient enable'
+sshpass -p 'root' ssh -p 22 root@192.168.1.251 'reboot'
 
 
 var=1
