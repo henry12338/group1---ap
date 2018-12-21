@@ -109,3 +109,7 @@ Read [how_to_git](https://github.com/refill12338/group1---ap/blob/master/How_To_
 (Edge) add action 4 to inform controller ap's gateway id
 
 (Edge) modify upload_and_setup.sh to enable APClient script in target AP
+
+2018/12/21 10:42(UTC +8)
+
+(Edge) fix some problem in ./install_ap/upload_and_setup.sh 'uci commit network', '/etc/init.d/wifidog enable'

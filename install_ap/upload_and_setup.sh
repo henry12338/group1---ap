@@ -1,11 +1,14 @@
 #divide vlan to one for internal network, one for external network
+echo "setup vlan"
 sshpass -p 'root' ssh -p 22 root@192.168.1.251 'uci set network.@switch_vlan[0].ports="1 2 3 6t"'
 
 sshpass -p 'root' ssh -p 22 root@192.168.1.251 'uci set network.@switch_vlan[1].ports="0 4 6t"'
 
-sshpass -p 'root' ssh -p 22 root@192.168.1.251 'uci commit'
+sshpass -p 'root' ssh -p 22 root@192.168.1.251 'uci commit network'
 
 #upload firmware and md5sums to check intergrity
+echo "uploading firmware"
+
 sshpass -p 'root' scp ./openwrt-ramips-mt7628-mt7628-squashfs-sysupgrade.bin root@192.168.1.251:/tmp
 
 sshpass -p 'root' scp ./md5sums root@192.168.1.251:/tmp
@@ -29,6 +32,10 @@ sshpass -p 'root' scp -r ./config/* root@192.168.1.251:./config
 sshpass -p 'root' scp ./ap_client root@192.168.1.251:
 
 sshpass -p 'root' scp ./wifidog.conf root@192.168.1.251:/etc/wifidog.conf
+
+sshpass -p 'root' ssh -p 22 root@192.168.1.251 '/etc/init.d/wifidog enable'
+
+sshpass -p 'root' ssh -p 22 root@192.168.1.251 '/etc/init.d/wifidog start'
 
 echo "updated AP program, now run AP program"
 #set ap_client to run when booted, run ap_client
