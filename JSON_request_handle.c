@@ -273,7 +273,7 @@ int Handle_Change_Config(const char * InputBuf, int socket_fd)
 			snprintf(ConCat, sizeof(ConCat), "%s,\n	\"Config_%d\" : \"%s\"", OutputBuf, counter, Message);
 			strncpy(OutputBuf, ConCat, sizeof(OutputBuf));
 
-			snprintf(logText, sizeof(logText), "[%s] command: %s", __FILE__, Command);
+			snprintf(logText, sizeof(logText), "[%s] counter is %d, command: %s", __FILE__, counter, Command);
 			RecordLog(logText);
 
 		}
@@ -283,6 +283,7 @@ int Handle_Change_Config(const char * InputBuf, int socket_fd)
 			RecordLog(logText);
 		}
 		counter++;
+		snprintf(Query_Config, sizeof(Query_Config), "$.Config_%d", counter);
 	}
 	if(isOneCommandValid)
 	{
