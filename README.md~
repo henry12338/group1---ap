@@ -113,3 +113,11 @@ Read [how_to_git](https://github.com/refill12338/group1---ap/blob/master/How_To_
 2018/12/21 10:42(UTC +8)
 
 (Edge) fix some problem in ./install_ap/upload_and_setup.sh 'uci commit network', '/etc/init.d/wifidog enable'
+
+2018/12/29 12:42(UTC +8)
+
+(Edge) add comment in JSON_request_handle.c
+
+(Edge) restart wifidog after updating gwid
+
+(Edge) delete gwid in return ap info action

@@ -219,6 +219,7 @@ int Handle_Change_Config(const char * InputBuf, int socket_fd)
 	//Change every config in system according to JSON using uci
 	printf("InputBuf: %s\n", InputBuf);
 
+	char logText[500];
 	char OutputBuf[1000];
         snprintf(OutputBuf, sizeof(OutputBuf), "{\n	\"Action\" : 3");
 
@@ -227,6 +228,7 @@ int Handle_Change_Config(const char * InputBuf, int socket_fd)
 	char Message[300];
 	int ConfigAppend;
 	const char * Buf;
+	int isOneCommandValid = 0;//if any change config command success, it set to 1
 	int len;
 	int counter = 1;
 	int Find_Category, Find_Keyword;
@@ -260,27 +262,35 @@ int Handle_Change_Config(const char * InputBuf, int socket_fd)
 					}
 				}
 			}
+			outside:;
+			FILE * Command_exec = popen(Command, "r");
+			fgets(Message, sizeof(Message), Command_exec);
+			pclose(Command_exec);
+			isOneCommandValid = 1;
+
+
+			char ConCat[1000];
+			snprintf(ConCat, sizeof(ConCat), "%s,\n	\"Config_%d\" : \"%s\"", OutputBuf, counter, Message);
+			strncpy(OutputBuf, ConCat, sizeof(OutputBuf));
+
+			snprintf(logText, sizeof(logText), "[%s] command: %s", __FILE__, Command);
+			RecordLog(logText);
+
 		}
-		outside:;
-
-		FILE * Command_exec = popen(Command, "r");
-		fgets(Message, sizeof(Message), Command_exec);
-		pclose(Command_exec);
-
-
-		char ConCat[1000];
-		snprintf(ConCat, sizeof(ConCat), "%s,\n	\"Config_%d\" : \"%s\"", OutputBuf, counter, Message);
-		strncpy(OutputBuf, ConCat, sizeof(OutputBuf));
-
-		printf("Command: %s\n", Command);
-
+		else
+		{
+			snprintf(logText, sizeof(logText), "[%s] Malicious command: %s", __FILE__, Command);
+			RecordLog(logText);
+		}
 		counter++;
-		snprintf(Query_Config, sizeof(Query_Config), "$.Config_%d", counter);
+	}
+	if(isOneCommandValid)
+	{
+		system("wifi");
 	}
 	char ConCat[1000];
 	snprintf(ConCat, sizeof(ConCat), "%s\n}\n", OutputBuf);
 	strncpy(OutputBuf, ConCat, sizeof(OutputBuf));
-	system("wifi");
 	return send(socket_fd, OutputBuf, strlen(OutputBuf)+1, 0);
 }
 int Handle_Upload_Log(const char * InputBuf, int socket_fd)

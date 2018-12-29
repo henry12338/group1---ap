@@ -121,3 +121,7 @@ Read [how_to_git](https://github.com/refill12338/group1---ap/blob/master/How_To_
 (Edge) restart wifidog after updating gwid
 
 (Edge) delete gwid in return ap info action
+
+2018/12/29 04:03(UTC +8)
+
+(Edge) fix malicious command detect in JSON_request_handle.c
