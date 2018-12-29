@@ -34,6 +34,11 @@ int Save_Config_Character(const char * FileName, const char * Key, char Value)
 				gotcha = 1;
 				fprintf(fp_write, "%s = %c\n", Key, Value);
 			}
+			else
+			{
+				fprintf(fp_write, "%s\n", Line);
+			}
+			
 		}		
 	}
 	fclose(fp_read);

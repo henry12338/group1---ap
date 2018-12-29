@@ -14,6 +14,7 @@
 
 int Handle_Action(const char * InputBuf, int socket_fd, int * State)
 {
+	//get action and distribute action to each function to handle
 	double action = mjson_find_number(InputBuf, strlen(InputBuf), "$.Action", -1);
 	char logText[500];
 	snprintf(logText, sizeof(logText), "[%s] Action is %d", __FILE__, (int)action);
@@ -95,6 +96,7 @@ int MatchFunc(const char * Origin, const char * needle)
 }
 int Handle_Controller_Alive(const char * InputBuf, int * State)
 {
+	//Change Controller state to what it indicate
 	double buf = mjson_find_number(InputBuf, strlen(InputBuf), "$.State", -1);
 	*State = (int)buf;
 	return 1;
@@ -102,8 +104,8 @@ int Handle_Controller_Alive(const char * InputBuf, int * State)
 int Handle_Register_AP(const char * InputBuf)
 {
 	char logText[500];
-
 	char gw_id[200];
+	//get controller distribute gateway id and update it to /etc/wifidog.conf
 	mjson_find_string(InputBuf, strlen(InputBuf), "$.Gateway_ID", gw_id, sizeof(gw_id));
 	FILE * fp_read = fopen("/etc/wifidog.conf", "r");
 	FILE * fp_write = fopen("/etc/wifidog.conf_tmp", "a+");
@@ -115,6 +117,7 @@ int Handle_Register_AP(const char * InputBuf)
 		{
 			if(MatchFunc(FileBuf, "GatewayID") != -1)
 			{
+				//find GatewayID key in /etc/wifidog.conf
 				fprintf(fp_write, "GatewayID %s\n", gw_id);
 				success = 1;
 				continue;
@@ -132,6 +135,8 @@ int Handle_Register_AP(const char * InputBuf)
 		fclose(fp_write);
 		remove("/etc/wifidog.conf");
 		rename("/etc/wifidog.conf_tmp", "/etc/wifidog.conf");
+
+		//Change AP_Registered state in connect_config to 1 if successfully registered 
 		char CurrentPath[200];
 		char ConfigPath[200];
 		getcwd(CurrentPath, sizeof(CurrentPath));
@@ -145,6 +150,9 @@ int Handle_Register_AP(const char * InputBuf)
 		}
 		snprintf(logText, sizeof(logText), "[%s] Register AP successed", __FILE__);
 		RecordLog(logText);
+
+		//Restart wifidog after updated
+		system("/etc/init.d/wifidog restart");
 		return 1;
 	}
 	else
@@ -163,6 +171,7 @@ int Handle_Return_AP_Info(const char * InputBuf, int socket_fd)
 	char APRecordPath[200];
 	char Command[500];
 
+	//Get cpu usage percentage
 	system("mkdir APRecord");
 	getcwd(CurrentPath, sizeof(CurrentPath));
 	snprintf(APRecordPath, sizeof(APRecordPath), "%s/APRecord/cpu_usage_record", CurrentPath);
@@ -178,6 +187,7 @@ int Handle_Return_AP_Info(const char * InputBuf, int socket_fd)
 	fscanf(fp, "%lf", &AP_Usage_Percent);
 	fclose(fp);
 
+	//Get received and transmit traffic from /proc/net/dev
 	char buf[500];
 	fp = fopen("/proc/net/dev", "r");
 	if(!fp)
@@ -199,39 +209,14 @@ int Handle_Return_AP_Info(const char * InputBuf, int socket_fd)
 	snprintf(logText, sizeof(logText), "[%s] AP Usage Percent is %.2f", __FILE__, AP_Usage_Percent);
 	RecordLog(logText);
 
-	char FileBuf[200];
-	char gw_id[200];
-	FILE * fp_read = fopen("/etc/wifidog.conf", "r");
-	
-	if(fp_read)
-	{
-		char FileBuf[200];
-		while(fgets(FileBuf, sizeof(FileBuf), fp_read))
-		{
-			if(MatchFunc(FileBuf, "GatewayID") != -1)
-			{
-				sscanf(FileBuf, "%*s %s\n", gw_id);
-				continue;
-			}
-		}
-		fclose(fp_read);
-		return 1;
-	}
-	else
-	{
-		snprintf(logText, sizeof(logText), "[%s] Request AP gateway_id failed, can't open /etc/wifidog.conf", __FILE__);
-		RecordLog(logText);
-		return 0;
-	}
-
-
 	char OutputBuf[1000];
-        snprintf(OutputBuf, sizeof(OutputBuf), "{\n  \"Action\" : 2,\n  \"AP CPU Usage Percent\" : %.2f,\n  \"Network Received Traffic(KiB)\" : %u,\n  \"Network Transmit Traffic(KiB)\" : %u,\n	\"Gateway_ID\" : %s\n}\n", AP_Usage_Percent, AP_Traffic_Received/KiB, AP_Traffic_Transmit/KiB, gw_id);
+        snprintf(OutputBuf, sizeof(OutputBuf), "{\n  \"Action\" : 2,\n  \"AP CPU Usage Percent\" : %.2f,\n  \"Network Received Traffic\" : %u,\n  \"Network Transmit Traffic\" : %u\n}\n", AP_Usage_Percent, AP_Traffic_Received/KiB, AP_Traffic_Transmit/KiB);
 
 	return send(socket_fd, OutputBuf, strlen(OutputBuf)+1, 0);
 }
 int Handle_Change_Config(const char * InputBuf, int socket_fd)
 {
+	//Change every config in system according to JSON using uci
 	printf("InputBuf: %s\n", InputBuf);
 
 	char OutputBuf[1000];
@@ -253,6 +238,7 @@ int Handle_Change_Config(const char * InputBuf, int socket_fd)
 		mjson_find_string(InputBuf, strlen(InputBuf), Query_Config, Command, sizeof(Command));
 
 		int len = strlen(Command);
+		//Check JSON command to avoid malicious attack
 		char Keyword[200];
 		sscanf(Command, "%[^ ]%*[^\n]", Keyword);
 		if(strncmp(Keyword, "uci", strlen("uci")) == 0)
@@ -299,6 +285,7 @@ int Handle_Change_Config(const char * InputBuf, int socket_fd)
 }
 int Handle_Upload_Log(const char * InputBuf, int socket_fd)
 {
+	//Upload log to FTP server
 	char Filename[100];
 	char month[10];
 	char logText[500];
@@ -309,7 +296,7 @@ int Handle_Upload_Log(const char * InputBuf, int socket_fd)
 	snprintf(ConfigPath, sizeof(ConfigPath), "%s/config/connect_config", CurrentPath);
 
 	int year, day, hour, minute, sec;
-	
+	//Get Current Time in below format
 	//Sun Nov 25 01:27:25 2018
 	time_t cur_time = time(NULL);
 	sscanf(ctime(&cur_time), "%*s %s %d %d:%d:%d %d", month, &day, &hour, &minute, &sec, &year);
@@ -331,6 +318,7 @@ int Handle_Upload_Log(const char * InputBuf, int socket_fd)
 		RecordLog(logText);
 		return -1;
 	}
+	//Upload file name is RecordLog_gatewayid_year_month_day_hour_minute_second.log
 	snprintf(FTPFile, sizeof(FTPFile), "ftp://%s/RecordLog_%d_%d_%s_%d_%d_%d_%d.log", FTPServerAddress, GetGatewayID(), year, month, day, hour, minute, sec);
 
 	ConfigBuf = Load_Config_String(ConfigPath, "FTP_Username", UserName, sizeof(UserName));
@@ -356,6 +344,8 @@ int Handle_Upload_Log(const char * InputBuf, int socket_fd)
 
 int Handle_Download_Update(const char * InputBuf, int socket_fd)
 {
+	//Controller indicate ap to update
+	//Download new ap client from FTP server
 	char FileName[50];
 	mjson_find_string(InputBuf, strlen(InputBuf), "$.Update Archive File Name", FileName, sizeof(FileName));
 
@@ -374,7 +364,7 @@ int Handle_Download_Update(const char * InputBuf, int socket_fd)
 
 	snprintf(logText, sizeof(logText), "[%s] Downloaded Filename: %s", __FILE__, FileName);
 	RecordLog(logText);
-
+	//Get Every needed information from connect_config
 	if(ConfigBuf.DataType != 2)
 	{
 		snprintf(logText, sizeof(logText), "[%s] No proper config", __FILE__);
@@ -415,7 +405,6 @@ int Handle_Download_Update(const char * InputBuf, int socket_fd)
 	snprintf(logText, sizeof(logText), "[%s] Command: %s", __FILE__, Command_To_delete_previous);
 	RecordLog(logText);
 
-
 	char Command_To_Extract[200];
 	snprintf(Command_To_Extract, sizeof(Command_To_Extract), "tar -xvzf %s -C %s", FileName, Update_Extract_Loc);
 
@@ -425,11 +414,13 @@ int Handle_Download_Update(const char * InputBuf, int socket_fd)
 	system(Command_To_delete_previous);
 	system(Command_To_Extract);
 
+	remove(FileName);
+
 	int Applied = 1;
 
 	char OutputBuf[1000];
         snprintf(OutputBuf, sizeof(OutputBuf), "{\n  \"Action\" : 7,\n  \"Applied\" : %d\n}\n", Applied);
 	send(socket_fd, OutputBuf, strlen(OutputBuf)+1, 0);
-	execv("/root/ap_client", NULL);
+	execv("/root/ap_client", "ap_client", NULL);
 	return 1;
 }

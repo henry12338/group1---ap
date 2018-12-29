@@ -2,7 +2,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-bool Save_Config_Character(const char * FileName, const char * Key, char Value)
+int Save_Config_Character(const char * FileName, const char * Key, char Value)
 {
 	char FileName_Tmp[500];
 	snprintf(FileName_Tmp, sizeof(FileName_Tmp), "%s_tmp", FileName);
