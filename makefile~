@@ -2,8 +2,8 @@ all: main.c update.o JSON_action.o JSON_request_handle.o config.o update_local.o
 	mipsel-openwrt-linux-gcc -std=c99 -I./include main.c update.o JSON_action.o JSON_request_handle.o config.o help.o CheckFile.o utility.o -Wl,-rpath-link=$(TOOLCHAIN_DIR)lib -lcurl -o ap_client
 	gcc -std=c99 -I./include main.c update_local.o JSON_action_local.o JSON_request_handle_local.o config_local.o help_local.o CheckFile_local.o utility_local.o -lcurl -o ap_client_local
 #	gcc -std=c99 -I./include test.c JSON_request_handle_local.o utility_local.o -lcurl -o testpro
-	gcc -std=c99 -I./include intergrate_test.c JSON_action_local.o JSON_request_handle_local.o config_local.o update_local.o CheckFile_local.o utility_local.o -lcurl -o intergrate_test
-	mipsel-openwrt-linux-gcc -std=c99 -I./include intergrate_test.c JSON_action.o JSON_request_handle.o config.o update.o CheckFile.o utility_local.o -Wl,-rpath-link=$(TOOLCHAIN_DIR)lib -lcurl -o intergrate_test_ap
+	gcc -std=c99 -O0 -g -I./include intergrate_test.c JSON_action_local.o JSON_request_handle_local.o config_local.o update_local.o CheckFile_local.o utility_local.o -lcurl -o intergrate_test
+	mipsel-openwrt-linux-gcc -std=c99 -I./include intergrate_test.c JSON_action.o JSON_request_handle.o config.o update.o CheckFile.o utility.o -Wl,-rpath-link=$(TOOLCHAIN_DIR)lib -lcurl -o intergrate_test_ap
 	rm *.o
 update.o: update.c
 	mipsel-openwrt-linux-gcc -std=c99 -I./include -c update.c -o update.o

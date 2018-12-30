@@ -21,7 +21,9 @@ size_t Write_Callback(void *buffer, size_t size, size_t nmemb, void *stream)
 		if(!out->stream)
 			return -1; /* failure, can't open file to write */ 
 	}
-	return fwrite(buffer, size, nmemb, out->stream);
+	int ret = fwrite(buffer, size, nmemb, out->stream);
+	fclose(out->stream);
+	return ;
 }
 size_t Read_Callback(void * ptr, size_t size, size_t nmemb, void * stream)
 {
@@ -31,7 +33,7 @@ size_t Read_Callback(void * ptr, size_t size, size_t nmemb, void * stream)
 
 	return retcode;
 }
-void DownloadSettingPackage(const char * URL, const char * username, const char * password, const char * DownloadLoc)
+void DownloadFile(const char * URL, const char * username, const char * password, const char * DownloadLoc)
 {
 	char logText[500];
 

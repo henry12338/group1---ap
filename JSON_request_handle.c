@@ -201,6 +201,7 @@ int Handle_Return_AP_Info(const char * InputBuf, int socket_fd)
 			fscanf(fp, "%u %*u %*u %*u %*u %*u %*u %*u %u", &AP_Traffic_Received, &AP_Traffic_Transmit);
 		}
 	}
+	fclose(fp);
 	const unsigned int KiB = 1024;
 	snprintf(logText, sizeof(logText), "[%s] AP Received Traffic is %u(KiB)", __FILE__, AP_Traffic_Transmit/KiB);
 	RecordLog(logText);

@@ -125,3 +125,7 @@ Read [how_to_git](https://github.com/refill12338/group1---ap/blob/master/How_To_
 2018/12/29 04:03(UTC +8)
 
 (Edge) fix malicious command detect in JSON_request_handle.c
+
+2018/12/30 19:23(UTC +8)
+
+(Edge) fix memory leak in JSON_request_handle.c at Handle_Return_AP_Info()
