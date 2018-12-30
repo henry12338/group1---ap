@@ -1,0 +1,3 @@
+just use "make" command in terminal in this folder, and there will be "ap_client" and "ap_client_local"
+"ap_client_local" is for test in local x86 system, while ap_client is for ap
+test if there exist any bug in anywhere:D
