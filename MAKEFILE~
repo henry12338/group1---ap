@@ -1,7 +1,0 @@
-all: main.c update.o JSON_action.o config.o
-	mipsel-openwrt-linux-gcc main.c update.o JSON_action.o config.o -o ap_client
-update.o: update.c
-	mipsel-openwrt-linux-gcc -c update.c -o update.o
-JSON_action.o: JSON_action.o
-	mipsel-openwrt-linux-gcc -c JSON_action.c -o JSON_action.o
-config.o: config.o
