@@ -1,0 +1,10 @@
+[Thu Jan  3 12:44:21 2019] [JSON_request_handle.c] Action is 3
+[Thu Jan  3 12:44:21 2019] [JSON_request_handle.c] counter is 1, command: uci set wireless.@wifi-iface[2].ssid='ggwpp
+[Thu Jan  3 12:45:38 2019] [JSON_request_handle.c] Action is 3
+[Thu Jan  3 12:45:38 2019] [JSON_request_handle.c] counter is 1, command: uci set wireless.@wifi-iface[2].ssid='ggwpp
+[Thu Jan  3 12:46:47 2019] [JSON_request_handle.c] Action is 3
+[Thu Jan  3 12:46:47 2019] [JSON_request_handle.c] counter is 1, command: uci set wireless.@wifi-iface[2].ssid='ggwpp
+[Thu Jan  3 12:49:24 2019] [JSON_request_handle.c] Action is 3
+[Thu Jan  3 12:49:24 2019] [JSON_request_handle.c] counter is 1, command: uci set wireless.@wifi-iface[2].ssid='ggwpp
+[Thu Jan  3 12:49:50 2019] [JSON_request_handle.c] Action is 3
+[Thu Jan  3 12:49:50 2019] [JSON_request_handle.c] counter is 1, command: uci set wireless

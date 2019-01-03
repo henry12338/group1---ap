@@ -221,12 +221,13 @@ int Handle_Change_Config(const char * InputBuf, int socket_fd)
 	printf("InputBuf: %s\n", InputBuf);
 
 	char logText[500];
-	char OutputBuf[1000];
+	char OutputBuf[4096];
         snprintf(OutputBuf, sizeof(OutputBuf), "{\n	\"Action\" : 3");
 
 	char Query_Config[100];
 	char Command[300];
-	char Message[300];
+	char Message[1000];
+	char ConCat[1000];
 	int ConfigAppend;
 	const char * Buf;
 	int isOneCommandValid = 0;//if any change config command success, it set to 1
@@ -264,15 +265,20 @@ int Handle_Change_Config(const char * InputBuf, int socket_fd)
 				}
 			}
 			outside:;
+			snprintf(ConCat, sizeof(ConCat), "%s,\n	\"Config_%d\" : \"", OutputBuf, counter);
+			strncpy(OutputBuf, ConCat, sizeof(OutputBuf));
+
 			FILE * Command_exec = popen(Command, "r");
-			fgets(Message, sizeof(Message), Command_exec);
+			while(fgets(Message, sizeof(Message), Command_exec))
+			{
+				snprintf(ConCat, sizeof(ConCat), "%s%s", OutputBuf, Message);
+				strncpy(OutputBuf, ConCat, sizeof(OutputBuf));
+			}
+			snprintf(ConCat, sizeof(ConCat), "%s\"", OutputBuf);
+			strncpy(OutputBuf, ConCat, sizeof(OutputBuf));
+
 			pclose(Command_exec);
 			isOneCommandValid = 1;
-
-
-			char ConCat[1000];
-			snprintf(ConCat, sizeof(ConCat), "%s,\n	\"Config_%d\" : \"%s\"", OutputBuf, counter, Message);
-			strncpy(OutputBuf, ConCat, sizeof(OutputBuf));
 
 			snprintf(logText, sizeof(logText), "[%s] counter is %d, command: %s", __FILE__, counter, Command);
 			RecordLog(logText);
@@ -286,13 +292,13 @@ int Handle_Change_Config(const char * InputBuf, int socket_fd)
 		counter++;
 		snprintf(Query_Config, sizeof(Query_Config), "$.Config_%d", counter);
 	}
+	snprintf(ConCat, sizeof(ConCat), "%s\n}\n", OutputBuf);
+	strncpy(OutputBuf, ConCat, sizeof(OutputBuf));
+	printf("[OutputBuf]: %s\n", OutputBuf);
 	if(isOneCommandValid)
 	{
 		system("wifi");
 	}
-	char ConCat[1000];
-	snprintf(ConCat, sizeof(ConCat), "%s\n}\n", OutputBuf);
-	strncpy(OutputBuf, ConCat, sizeof(OutputBuf));
 	return send(socket_fd, OutputBuf, strlen(OutputBuf)+1, 0);
 }
 int Handle_Upload_Log(const char * InputBuf, int socket_fd)

@@ -56,5 +56,8 @@ int main()
 	DownloadSettingPackage("ftp://35.221.194.17/ggwp.c", "uftp", "seg1", "ggwp.c");
 	*/
 
-	DownloadFile("ftp://35.221.194.17/ftptest.txt", "uftp", "seg1", "ftptest.txt");
+//	DownloadFile("ftp://35.221.194.17/ftptest.txt", "uftp", "seg1", "ftptest.txt");
+	int state;
+	Handle_Action("{\"Action\" : 3,\"Config_1\":{\"Command\" : \"uci sat\"}}", 0, &state);
+
 }

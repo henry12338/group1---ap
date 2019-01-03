@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -71,6 +72,9 @@ int main(int argc, char ** argv)
 	while(1)
 	{
 		int socket_fd = socket(AF_INET, SOCK_STREAM, 0);
+		//disable wifidog when we can't connect to controller
+		system("/etc/init.d/wifidog disable");
+		system("/etc/init.d/wifidog stop");
 		if(socket_fd == -1)
 		{
 			snprintf(logText, sizeof(logText), "[%s] Socket Creation Failure", __FILE__);
@@ -86,6 +90,9 @@ int main(int argc, char ** argv)
 			RecordLog(logText);
 			fflush(stdout);
 		}
+		//enable wifidog when we can connect to controller
+		system("/etc/init.d/wifidog enable");
+		system("/etc/init.d/wifidog start");
 		snprintf(logText, sizeof(logText), "[%s] Connected to %s", __FILE__, ip_address);
 		RecordLog(logText);
 
