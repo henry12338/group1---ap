@@ -45,5 +45,3 @@ sshpass -p 'root' ssh -p 22 root@192.168.1.251 "chmod +x /etc/init.d/APClient;ch
 sshpass -p 'root' ssh -p 22 root@192.168.1.251 '/etc/init.d/APClient enable'
 sshpass -p 'root' ssh -p 22 root@192.168.1.251 'reboot'
 
-
-var=1
