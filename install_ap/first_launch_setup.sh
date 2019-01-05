@@ -72,3 +72,5 @@ then
 	echo "use default FTP password"
 fi
 sed -i "/FTP_Password = */ c\FTP_Password = ${ftppassword}" $Config_To_Be_configure
+
+sshpass -p 'root' scp $Config_To_Be_configure root@192.168.1.251:./config
