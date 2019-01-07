@@ -45,6 +45,7 @@ int Save_Config_Character(const char * FileName, const char * Key, char Value)
 	fclose(fp_write);
 	remove(FileName);
 	rename(FileName_Tmp, FileName);
+	return 1;
 }
 ConfigQuery Load_Config_Character(const char * FileName, const char * Key)
 {
