@@ -152,7 +152,8 @@ int Handle_Register_AP(const char * InputBuf)
 		RecordLog(logText);
 
 		//Restart wifidog after updated
-		system("/etc/init.d/wifidog restart");
+		system("/etc/init.d/wifidog stop");
+		system("/etc/init.d/wifidog start");
 		return 1;
 	}
 	else
